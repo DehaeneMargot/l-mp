@@ -1,23 +1,96 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import * as THREE from 'three';
+import { WEBGL } from './WebGL';
 
 function App() {
+  let camera:any, scene:any, renderer:any;
+  let controller:any;
+  init();
+  if ( WEBGL.isWebGLAvailable() ) {
+
+    // Initiate function or other initializations here
+    animate();
+  
+  } else {
+  
+    const warning = WEBGL.getWebGLErrorMessage();
+    console.log(warning)
+  
+  }
+  animate();
+
+  function init() {
+    const container = document.createElement( 'div' );
+    document.body.appendChild( container );
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
+
+    const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
+    light.position.set( 0.5, 1, 0.25 );
+    scene.add( light );
+
+    //
+
+    renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.xr.enabled = true;
+    container.appendChild( renderer.domElement );
+
+    //
+
+    const geometry = new THREE.CylinderGeometry( 0, 0.05, 0.2, 32 ).rotateX( Math.PI / 2 );
+
+    function onSelect() {
+
+      const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
+      const mesh = new THREE.Mesh( geometry, material );
+      mesh.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
+      mesh.quaternion.setFromRotationMatrix( controller.matrixWorld );
+      scene.add( mesh );
+
+    }
+
+    controller = renderer.xr.getController( 0 );
+    controller.addEventListener( 'select', onSelect );
+    scene.add( controller );
+
+    //
+
+    window.addEventListener( 'resize', onWindowResize );
+
+  }
+
+  function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+  }
+
+  //
+
+  function animate() {
+
+    renderer.setAnimationLoop( render );
+
+  }
+
+  function render() {
+
+    renderer.render( scene, camera );
+
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
   );
