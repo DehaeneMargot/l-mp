@@ -1,27 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { WEBGL } from './WebGL';
+import ARButton from './components/ARButton';
 
 function App() {
-  let camera:any, scene:any, renderer:any;
+  const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
+  let camera:any, scene:any
   let controller:any;
-  init();
-  if ( WEBGL.isWebGLAvailable() ) {
+  let reticle:any;
+  let hitTestSource:any = null;
+  let hitTestSourceRequested:any = false;
 
-    // Initiate function or other initializations here
-    animate();
-  
-  } else {
-  
-    const warning = WEBGL.getWebGLErrorMessage();
-    console.log(warning)
-  
-  }
-  animate();
-
-  function init() {
+  const init = () => {
     const container = document.createElement( 'div' );
     document.body.appendChild( container );
 
@@ -33,64 +23,133 @@ function App() {
     light.position.set( 0.5, 1, 0.25 );
     scene.add( light );
 
-    //
+    let newRenderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+    newRenderer.setPixelRatio( window.devicePixelRatio );
+    newRenderer.setSize( window.innerWidth, window.innerHeight );
+    newRenderer.xr.enabled = true;
+    container.appendChild( newRenderer.domElement );
 
-    renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.xr.enabled = true;
-    container.appendChild( renderer.domElement );
+    var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
 
-    //
-
-    const geometry = new THREE.CylinderGeometry( 0, 0.05, 0.2, 32 ).rotateX( Math.PI / 2 );
-
+    const materials = [
+      new THREE.MeshBasicMaterial({color: 0xff0000}),
+      new THREE.MeshBasicMaterial({color: 0x0000ff}),
+      new THREE.MeshBasicMaterial({color: 0x00ff00}),
+      new THREE.MeshBasicMaterial({color: 0xff00ff}),
+      new THREE.MeshBasicMaterial({color: 0x00ffff}),
+      new THREE.MeshBasicMaterial({color: 0xffff00})
+    ];
+    
+    // Create the cube and add it to the demo scene.
+    const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials);
+    cube.position.set(1, 1, 1);
+    scene.add(cube);
+    
     function onSelect() {
 
-      const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
-      const mesh = new THREE.Mesh( geometry, material );
-      mesh.position.set( 0, 0, - 0.3 ).applyMatrix4( controller.matrixWorld );
-      mesh.quaternion.setFromRotationMatrix( controller.matrixWorld );
-      scene.add( mesh );
+      if ( reticle.visible ) {
+
+        const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
+        const mesh = new THREE.Mesh( geometry, material );
+        mesh.position.setFromMatrixPosition( reticle.matrix );
+        mesh.scale.y = Math.random() * 2 + 1;
+        scene.add( mesh );
+
+      }
 
     }
 
-    controller = renderer.xr.getController( 0 );
+    controller = newRenderer.xr.getController( 0 );
     controller.addEventListener( 'select', onSelect );
     scene.add( controller );
 
-    //
+    reticle = new THREE.Mesh(
+      new THREE.RingGeometry( 0.15, 0.2, 32 ).rotateX( - Math.PI / 2 ),
+      new THREE.MeshBasicMaterial()
+    );
+    reticle.matrixAutoUpdate = false;
+    reticle.visible = false;
+    scene.add( reticle );
 
+    newRenderer.setAnimationLoop((timestamp, frame:any) => {
+      if ( frame ) {
+
+        const referenceSpace = newRenderer.xr.getReferenceSpace();
+        const session = newRenderer.xr.getSession();
+
+        if ( hitTestSourceRequested === false ) {
+
+          session!.requestReferenceSpace( 'viewer' ).then( function ( referenceSpace ) {
+
+            session!.requestHitTestSource( { space: referenceSpace } ).then( function ( source ) {
+
+              hitTestSource = source;
+
+            } );
+
+          } );
+
+          session!.addEventListener( 'end', function () {
+
+            hitTestSourceRequested = false;
+            hitTestSource = null;
+
+          } );
+
+          hitTestSourceRequested = true;
+
+        }
+
+        if ( hitTestSource ) {
+
+          const hitTestResults = frame.getHitTestResults( hitTestSource );
+
+          if ( hitTestResults.length ) {
+
+            const hit = hitTestResults[ 0 ];
+
+            reticle.visible = true;
+            reticle.matrix.fromArray( hit.getPose( referenceSpace ).transform.matrix );
+
+          } else {
+
+            reticle.visible = false;
+
+          }
+
+        }
+
+      }
+
+      newRenderer.render( scene, camera );
+    })
+
+    const onWindowResize = () => {
+
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+  
+      newRenderer.setSize( window.innerWidth, window.innerHeight );
+  
+    } 
     window.addEventListener( 'resize', onWindowResize );
-
+    console.log(newRenderer);
+    setRenderer(newRenderer);
+    console.log(renderer)
   }
 
-  function onWindowResize() {
 
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+  useEffect(() => {
+    init();
+  }, [])
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
 
-  }
-
-  //
-
-  function animate() {
-
-    renderer.setAnimationLoop( render );
-
-  }
-
-  function render() {
-
-    renderer.render( scene, camera );
-
-  }
 
   return (
     <div className="App">
+      <h1 className='text-lg text-red-400'>hey</h1>
       <header className="App-header">
+        <ARButton renderer={renderer}/>
       </header>
     </div>
   );
