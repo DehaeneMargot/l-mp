@@ -8,22 +8,40 @@ const ARButton = (props: any) => {
     const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
     // let overlay: any = undefined;
     const overlay = useRef<HTMLDivElement>(null);
+    let scene: THREE.Scene | undefined = undefined;
+
+    const clearChildren = () => {
+        if (scene) {
+            scene.children.forEach((child: any) => {
+            console.log(child);
+
+            if (child.name !== "reticle") {
+                scene!.remove(child);
+            }
+            });
+        }
+    };
+
     useEffect(() => {
         console.log(props.renderer);
 
         if (sessionInit.optionalFeatures === undefined) {
-        sessionInit.optionalFeatures = [];
+            sessionInit.optionalFeatures = [];
+        }
+        if (sessionInit.requiredFeatures === undefined) {
+            sessionInit.requiredFeatures = [];
         }
         sessionInit.optionalFeatures.push("dom-overlay");
+        sessionInit.requiredFeatures.push("hit-test");
         sessionInit.domOverlay = { root: overlay.current! };
         if ("xr" in navigator) {
-        (navigator as any).xr.isSessionSupported( 'immersive-ar', {requiredFeatures: [ 'hit-test' ]} ).then(setARSupported)
+            (navigator as any).xr
+            .isSessionSupported("immersive-ar")
+            .then(setARSupported);
         }
-        console.log(ARSupported)
     }, []);
-
     useEffect(() => {
-        setRenderer(props.renderer);
+    setRenderer(props.renderer);
     }, [props.renderer]);
 
     const startSession = () => {
@@ -34,6 +52,7 @@ const ARButton = (props: any) => {
             .requestSession("immersive-ar", sessionInit)
             .then(async (session: any) => {
             session.addEventListener("end", () => {
+                clearChildren();
                 session.removeEventListener("end", () => {});
                 setCurrentSession(undefined);
                 overlay.current!.classList.toggle("hidden");

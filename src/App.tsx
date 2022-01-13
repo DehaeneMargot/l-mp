@@ -13,15 +13,16 @@ function App() {
 
   const init = () => {
     const container = document.createElement( 'div' );
+    container.classList.toggle("hidden");
     document.body.appendChild( container );
 
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
 
-    const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
-    light.position.set( 0.5, 1, 0.25 );
-    scene.add( light );
+    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+    light.position.set(0.5, 0, 0.25);
+    scene.add(light);
 
     let newRenderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
     newRenderer.setPixelRatio( window.devicePixelRatio );
@@ -29,34 +30,24 @@ function App() {
     newRenderer.xr.enabled = true;
     container.appendChild( newRenderer.domElement );
 
-    var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
-
-    const materials = [
-      new THREE.MeshBasicMaterial({color: 0xff0000}),
-      new THREE.MeshBasicMaterial({color: 0x0000ff}),
-      new THREE.MeshBasicMaterial({color: 0x00ff00}),
-      new THREE.MeshBasicMaterial({color: 0xff00ff}),
-      new THREE.MeshBasicMaterial({color: 0x00ffff}),
-      new THREE.MeshBasicMaterial({color: 0xffff00})
-    ];
+    const geometry = new THREE.CylinderGeometry(
+      0.1,
+      0.1,
+      0.2,
+      32
+    ).translate(0, 0.1, 0);
     
-    // Create the cube and add it to the demo scene.
-    const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials);
-    cube.position.set(1, 1, 1);
-    scene.add(cube);
     
-    function onSelect() {
-
-      if ( reticle.visible ) {
-
-        const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
-        const mesh = new THREE.Mesh( geometry, material );
-        mesh.position.setFromMatrixPosition( reticle.matrix );
+    const onSelect = () => {
+      if (reticle.visible) {
+        const material = new THREE.MeshPhongMaterial({
+          color: 0xffffff * Math.random()
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.setFromMatrixPosition(reticle.matrix);
         mesh.scale.y = Math.random() * 2 + 1;
-        scene.add( mesh );
-
+        scene.add(mesh);
       }
-
     }
 
     controller = newRenderer.xr.getController( 0 );
@@ -72,57 +63,49 @@ function App() {
     scene.add( reticle );
 
     newRenderer.setAnimationLoop((timestamp, frame:any) => {
-      if ( frame ) {
-
+      if (frame) {
         const referenceSpace = newRenderer.xr.getReferenceSpace();
         const session = newRenderer.xr.getSession();
 
-        if ( hitTestSourceRequested === false ) {
+        if (hitTestSourceRequested === false) {
+          session!
+            .requestReferenceSpace("viewer")
+            .then(function (referenceSpace) {
+              session!
+                .requestHitTestSource({ space: referenceSpace })
+                .then(function (source) {
+                  hitTestSource = source;
+                });
+            });
 
-          session!.requestReferenceSpace( 'viewer' ).then( function ( referenceSpace ) {
-
-            session!.requestHitTestSource( { space: referenceSpace } ).then( function ( source ) {
-
-              hitTestSource = source;
-
-            } );
-
-          } );
-
-          session!.addEventListener( 'end', function () {
-
+          session!.addEventListener("end", function () {
             hitTestSourceRequested = false;
             hitTestSource = null;
-
-          } );
+          });
 
           hitTestSourceRequested = true;
-
         }
 
-        if ( hitTestSource ) {
+        if (hitTestSource) {
+          const hitTestResults = frame.getHitTestResults(hitTestSource);
 
-          const hitTestResults = frame.getHitTestResults( hitTestSource );
-
-          if ( hitTestResults.length ) {
-
-            const hit = hitTestResults[ 0 ];
+          if (hitTestResults.length) {
+            const hit = hitTestResults[0];
 
             reticle.visible = true;
-            reticle.matrix.fromArray( hit.getPose( referenceSpace ).transform.matrix );
-
+            reticle.matrix.fromArray(
+              hit.getPose(referenceSpace!)!.transform.matrix
+            );
           } else {
-
             reticle.visible = false;
-
           }
-
         }
-
       }
 
-      newRenderer.render( scene, camera );
+      newRenderer.render(scene, camera);
     })
+
+    setRenderer(newRenderer);
 
     const onWindowResize = () => {
 
@@ -133,9 +116,6 @@ function App() {
   
     } 
     window.addEventListener( 'resize', onWindowResize );
-    console.log(newRenderer);
-    setRenderer(newRenderer);
-    console.log(renderer)
   }
 
 
