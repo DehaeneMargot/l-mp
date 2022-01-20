@@ -9,6 +9,8 @@ export const useAR = (() => {
   let reticle: any;
   let hitTestSource: any = null;
   let hitTestSourceRequested = false;
+  let bulbLight: any;
+  let bulbMat: any;
 
   const isARSupported = (): Promise<boolean> => {
     return new Promise((resolve, reject) => {
@@ -28,8 +30,13 @@ export const useAR = (() => {
   };
 
   const initLights = (scene: THREE.Scene) => {
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-    light.position.set(0.5, 0, 0.25);
+    //const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+    //light.position.set(0.5, 0, 0.25);
+    //scene.add(light);
+    const color = 0xFFFFFF;
+    const intensity = 1;
+    const light = new THREE.PointLight(color, intensity);
+    light.position.set(0, 10, 0);
     scene.add(light);
   };
 
