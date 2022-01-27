@@ -11,8 +11,8 @@ function Router() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />
-        <Route path="products" element={<Products />} />
-        <Route path="products/detail" element={<ProductDetail />} />
+        <Route path="lamps" element={<Products />} />
+        <Route path="lamps/detail" element={<ProductDetail />} />
       </Routes>
     </div>
   );
