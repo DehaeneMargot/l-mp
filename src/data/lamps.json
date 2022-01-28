@@ -6,10 +6,22 @@
             "category": "table_lamps",
             "colors": [
                 {
-                    "name": "Green",
+                    "name": "GREEN",
                     "colorCode": "#93C572",
-                    "modelLink": "/models/lamp/LAMP_t6.glb",
-                    "darkModelLink": "/models/lamp/LAMP_t6_E.glb"
+                    "modelLink": "/models/lamp/LAMP_Pompidou_GREEN.glb",
+                    "darkModelLink": "/models/lamp/LAMP_Pompidou_GREEN_E.glb"
+                },
+                {
+                    "name": "RED",
+                    "colorCode": "#FF0000",
+                    "modelLink": "/models/lamp/LAMP_Pompidou_RED.glb",
+                    "darkModelLink": "/models/lamp/LAMP_Pompidou_RED_E.glb"
+                },
+                {
+                    "name": "BLUE",
+                    "colorCode": "#0055FF",
+                    "modelLink": "/models/lamp/LAMP_Pompidou_RED.glb",
+                    "darkModelLink": "/models/lamp/LAMP_Pompidou_RED_E.glb"
                 }
             ],
             "rating": 4.5,

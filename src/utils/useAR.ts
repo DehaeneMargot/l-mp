@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { Color, MeshStandardMaterial, Object3D, Vector3 } from "three";
-import { XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight';
+import { Color, LightProbe, MeshStandardMaterial, Object3D, Vector3 } from "three";
+import { SessionLightProbe, XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight';
 import { ARButton } from 'three/examples/jsm/webxr/ARButton';
 
 export const useAR = (() => {
@@ -16,6 +16,8 @@ export const useAR = (() => {
   let currentModel: Object3D;
   let reticleEnabled: boolean = false;
   let defaultEnvironment: any;
+  let plane: any;
+  let planeCreated: boolean;
   // let bulbLight: any;
   // let bulbMat: any;
   let spotLight, lightHelper, shadowCameraHelper;
@@ -39,7 +41,7 @@ export const useAR = (() => {
 
   const initLights = (scene: THREE.Scene) => {
     // TEST 1
-    const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    const light = new THREE.PointLight(0xffffbb, 0x080820, 1);
     light.position.set(0.5, 0, 0.25);
     scene.add(light);
 
@@ -51,7 +53,7 @@ export const useAR = (() => {
     // scene.add(secondLight);
 
     // TEST 3
-    //  spotLight = new THREE.SpotLight( 0xffffff, 1 );
+    // spotLight = new THREE.SpotLight( 0xffffff, 1, 15, 0.2 );
     // spotLight.position.set(0.5, 0, 0.25);
     // spotLight.angle = Math.PI / 4;
     // spotLight.penumbra = 0.1;
@@ -66,9 +68,6 @@ export const useAR = (() => {
     // spotLight.shadow.focus = 1;
     // scene.add( spotLight );
 
-    // lightHelper = new THREE.SpotLightHelper( spotLight );
-    // scene.add( lightHelper );
-
     // shadowCameraHelper = new THREE.CameraHelper( spotLight.shadow.camera );
     // scene.add( shadowCameraHelper );
 
@@ -81,15 +80,14 @@ export const useAR = (() => {
     // scene.add( spotLightHelper );
   };
 
-  const clearChildren = () => {
+  const clearChildren = async () => {
     if (scene) {
-      scene.children.forEach((child: any) => {
+      scene?.children.forEach((child: any) => {
         console.log(child);
-
-        if (child.name !== "reticle") {
-          scene!.remove(child);
-        }
+        scene!.remove(child);
       });
+      console.log(scene?.children)
+
       initLights(scene);
     }
   };
@@ -135,17 +133,34 @@ export const useAR = (() => {
 
     initLights(sc);
 
+    const addPlaneToSceneThatReceivesShadows = () => {
+      const geometry = new THREE.PlaneGeometry(80,80);
+      geometry.rotateX(-Math.PI / 2);
+      const material = new THREE.ShadowMaterial();
+      material.opacity = 0.5;
+  
+      plane = new THREE.Mesh(geometry, material);
+      plane.receiveShadow = true;
+      plane.visible = false;
+      plane.matrixAutoUpdate = false;
+      sc.add(plane);
+    }
+  
+    addPlaneToSceneThatReceivesShadows();
+
     // Renderer
     let x = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     x.setPixelRatio(window.devicePixelRatio);
     x.setSize(window.innerWidth, window.innerHeight);
+    x.shadowMap.enabled = true;
+    x.shadowMap.type = THREE.PCFSoftShadowMap;
     x.outputEncoding = THREE.sRGBEncoding;
     x.physicallyCorrectLights = true;
     x.xr.enabled = true;
     container.appendChild( x.domElement );
 
     reticle = new THREE.Mesh(
-      new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
+      new THREE.RingBufferGeometry(0.10, 0.15, 32).rotateX(-Math.PI / 2),
       new THREE.MeshBasicMaterial()
     );
     reticle.matrixAutoUpdate = false;
@@ -155,14 +170,26 @@ export const useAR = (() => {
 
     // Light estimation
     const xrLight = new XREstimatedLight( x );
+    // const xrShadowLight = xrLight.directionalLight;
+    // xrShadowLight.castShadow = true;
+    // console.log(xrShadowLight.position)
+
+    // xrShadowLight.shadow.mapSize.width = 512; // default
+    // xrShadowLight.shadow.mapSize.height = 512; // default
+    // xrShadowLight.shadow.camera.near = 0.5; // default
+    // xrShadowLight.shadow.camera.far = 500; // default
+    //let lightProbe = new LightProbe(xrLight, x, unknown, , estimationStartCallback: () => void)
 
     xrLight.addEventListener( 'estimationstart', () => {
       // Swap the default light out for the estimated one one we start getting some estimated values.
       sc.add( xrLight );
       sc.remove( defaultLight );
       // The estimated lighting also provides an environment cubemap, which we can apply here.
+      
       if ( xrLight.environment ) {
+        console.log(xrLight);
         updateEnvironment( xrLight.environment );
+        console.log(xrLight.environment)
       }
 
     } );
@@ -201,35 +228,33 @@ export const useAR = (() => {
     // shadowCameraHelper = new THREE.CameraHelper( spotLight.shadow.camera );
     // sc.add( shadowCameraHelper );
 
-    x.shadowMap.enabled = true;
-    x.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
-
     //Create a SpotLight and turn on shadows for the light
+    // THIS TURNS SHADOWS ON
     const light = new THREE.SpotLight( 0xffffff );
     light.castShadow = true; // default false
     sc.add( light );
 
     //Set up shadow properties for the light
-    light.shadow.mapSize.width = 512; // default
-    light.shadow.mapSize.height = 512; // default
-    light.shadow.camera.near = 0.5; // default
-    light.shadow.camera.far = 500; // default
-    light.shadow.focus = 1; // default
+    // light.shadow.mapSize.width = 512; // default
+    // light.shadow.mapSize.height = 512; // default
+    // light.shadow.camera.near = 0.5; // default
+    // light.shadow.camera.far = 500; // default
+    // light.shadow.focus = 1; // default
 
     //Create a sphere that cast shadows (but does not receive them)
-    const sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
-    const sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xff0000 } );
-    const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-    sphere.castShadow = true; //default is false
-    sphere.receiveShadow = false; //default
-    sc.add( sphere );
+    // const sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
+    // const sphereMaterial = new THREE.MeshStandardMaterial( { color: 0xff0000 } );
+    // const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+    // sphere.castShadow = true; //default is false
+    // sphere.receiveShadow = false; //default
+    // sc.add( sphere );
 
     //Create a plane that receives shadows (but does not cast them)
 
 
     //Create a helper for the shadow camera (optional)
-    const helper = new THREE.CameraHelper( light.shadow.camera );
-    sc.add( helper );
+    // const helper = new THREE.CameraHelper( light.shadow.camera );
+    // sc.add( helper );
 
 
     //TEST - point light in lamp
@@ -284,11 +309,20 @@ export const useAR = (() => {
             reticle.matrix.fromArray(
               hit.getPose(referenceSpace!)!.transform.matrix
             );
+
+            plane.visible = true;
+            //if (!planeCreated) {
+              plane.matrix.fromArray(hit.getPose(referenceSpace!)!.transform.matrix);
+              planeCreated = true;
+            //}
           } else {
             reticle.visible = false;
           }
         }
       }
+
+      //light.position.set(- xrLight.directionalLight.position.x, xrLight.directionalLight.position.y, xrLight.directionalLight.position.z);
+      //console.log(light.position)
       x.render(scene!, camera);
     }); 
     renderer = x;
@@ -313,21 +347,26 @@ export const useAR = (() => {
   }
 
   const onSelect = () => {
-    if (modelPlaced == false) {
-      console.log("placed");
-      currentModel.position.setFromMatrixPosition(reticle.matrix);
-      currentModel.quaternion.setFromRotationMatrix(reticle.matrix);
-      //.add(new Vector3(0, 0.5, 0));
-      if(!scene?.getObjectByName("model")) {
-        scene!.add(currentModel);
+    if (reticle.visible) {
+      if (modelPlaced == false) {
+        currentModel.position.setFromMatrixPosition(reticle.matrix);
+        plane.position.setFromMatrixPosition(reticle.matrix);
+        currentModel.quaternion.setFromRotationMatrix(reticle.matrix);
+        //.add(new Vector3(0, 0.5, 0));
+        if(!scene?.getObjectByName("model")) {
+          if (reticle.visible) {
+            scene!.add(currentModel);
+            console.log("placed");
+            scene?.getObjectByName("reticle")?.removeFromParent();
+          }
+        } else {
+          let x = scene?.getObjectByName("model");
+          x!.visible = true;
+          reticleEnabled = false;
+        }
+        modelPlaced = true;
         scene?.getObjectByName("reticle")?.removeFromParent();
-      } else {
-        let x = scene?.getObjectByName("model");
-        x!.visible = true;
-        reticleEnabled = false;
       }
-      modelPlaced = true;
-      scene?.getObjectByName("reticle")?.removeFromParent();
     }
   };
 
@@ -351,6 +390,18 @@ export const useAR = (() => {
     let lastLocation:Vector3 = currentModel.position;
     let x = scene?.getObjectByName("model");
     x?.removeFromParent();
+
+    model.traverse( function( node ) {
+      node.castShadow = true;
+    });
+
+    model.traverse((node) => {
+      if (node instanceof THREE.Mesh) {
+        if (node.name === "BULB") {
+          node.castShadow = false;
+        }
+      } 
+    });
     
     scene?.add(model);
 

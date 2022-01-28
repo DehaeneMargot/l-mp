@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Loader } from "three";
+import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useAR } from "../utils/useAR";
 import QRCode from "react-qr-code";
+import { Link } from "react-router-dom";
 
 const ARButton = (props: any) => {
   const [arSupported, setArSupported] = useState(false);
@@ -13,10 +14,13 @@ const ARButton = (props: any) => {
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
   const [isModelPlaced, setIsModelPlaced] = useState(false);
   const [rotationValue, setRotationValue] = useState(0);
-  const [currentLamp, setCurrentLamp] = useState<string>("/models/lamp/LAMP_t6_E.glb");
-  const [currentModel, setCurrentModel] = useState<any>();
+  const [currentLamp, setCurrentLamp] = useState<any>({});
+  const [currentModel, setCurrentModel] = useState<any>(props.lamp.colors[0].modelLink);
   const [darkmodeOn, setDarkmodeOn] = useState(false);
   const [QRVisible, setQRVisible] = useState(false);
+  const [colorOptionsOpen, setColorOptionsOpen] = useState(false);
+  const [currentColor, setCurrentColor] = useState<any>(props.lamp.colors[0].name);
+
 
   const overlay = useRef<HTMLDivElement>(null);
   const {
@@ -32,7 +36,9 @@ const ARButton = (props: any) => {
   } = useAR;
 
   useEffect(() => {
+
     initLamp()
+
   }, [])
 
 
@@ -50,22 +56,26 @@ const ARButton = (props: any) => {
     sessionInit.domOverlay = { root: overlay.current! };
     if ("xr" in navigator) {
       (navigator as any).xr
-        .isSessionSupported("immersive-ar", {
-          // Doesn't do anything
-          requiredFeatures: ["depth-sensing"],
-          depthSensing: {
-            usagePreference: ["cpu-optimized", "gpu-optimized"],
-            formatPreference: ["luminance-alpha", "float32"]
-          }
-        })
+        .isSessionSupported("immersive-ar")
         .then((supported: any) => {
           setArSupported(supported);
           const loader = new GLTFLoader();
           loader.load(
-            "/models/lamp/LAMP_t1_RED.glb",
+            "/models/lamp/LAMP_" +props.lamp.name+"_"+props.lamp.colors[0].name+".glb",
             (gltf) => {
               const mesh = gltf.scene;
               mesh.rotateY(rotationValue);
+              mesh.traverse( function( node ) {
+                node.castShadow = true;
+              });
+              console.log("test")
+              mesh.traverse((node) => {
+                if (node instanceof THREE.Mesh) {
+                  if (node.name === "BULB") {
+                    node.castShadow = false;
+                  }
+                } 
+              });
 
               createSessionIfSupported(mesh).then((renderer) => {
                 setRenderer(renderer);
@@ -119,16 +129,34 @@ const ARButton = (props: any) => {
     setQRVisible(true);
   };
 
-  const handleDarkMode = async () => {
+  const handleDarkMode = async (currentColor: string) => {
     if (darkmodeOn) {
       setDarkmodeOn(false);
-      let mesh = await loadModel("/models/lamp/LAMP_t1_RED.glb")
+      let selectedColor = props.lamp.colors.find((i:any) => i.name === currentColor);
+      let selectedModel = selectedColor.modelLink;
+      let mesh = await loadModel(selectedModel);
       changeModel(mesh);
     } else {
       setDarkmodeOn(true);
-      let mesh = await loadModel("/models/lamp/LAMP_t1_RED_E_light_spot_tp4.glb")
+      let selectedColor = props.lamp.colors.find((i:any) => i.name === currentColor);
+      let selectedModel = selectedColor.darkModelLink;
+      let mesh = await loadModel(selectedModel);
       changeModel(mesh);
     }
+  }
+
+  const handleColorOptions = async (selectedColor:any) => {
+    setCurrentColor(selectedColor.name)
+    if (darkmodeOn) {
+      let selectedModel = selectedColor.darkModelLink;
+      let mesh = await loadModel(selectedModel);
+      changeModel(mesh);
+    } else {
+      let selectedModel = selectedColor.modelLink;
+      let mesh = await loadModel(selectedModel);
+      changeModel(mesh);
+    }
+
   }
 
   return (
@@ -148,9 +176,19 @@ const ARButton = (props: any) => {
 
           <div ref={overlay} className="hidden pointer-events-none ">
             <div>
-              <div className="flex justify-end">
+              <div className="flex justify-between">
+              <div className="m-4 test">
+                {props.lamp.colors.map((item:any, index:number) => (
+                  <div>
+                    <input defaultChecked={index === 0} className="hidden peer" type="radio" name="color" id={item.name} value={item.name} onChange={() => {handleColorOptions(item)}}/>
+                    <label className="inline-block w-8 h-8 mr-3 pointer-events-auto peer-checked:ring-neutral-100 peer-checked:ring-4 rounded-full" htmlFor={item.name}><span className="block rounded-full w-full h-full" style={{backgroundColor: item.colorCode}}></span></label>
+                  </div>
+                ))}
+              </div>
+
+                
                 <button
-                  className="text-black bg-white p-3 rounded-lg absolute m-4 pointer-events-auto w-12 h-12 flex justify-center items-center"
+                  className="text-black bg-white p-3 rounded-lg m-4 pointer-events-auto w-12 h-12 flex justify-center items-center"
                   onClick={closeSession}
                 >
                   <svg
@@ -191,7 +229,7 @@ const ARButton = (props: any) => {
                       </button>
                     </div>
                     {!darkmodeOn ? (
-                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={handleDarkMode}>
+                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={() => handleDarkMode(currentColor)}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
                           <g id="Group_31" data-name="Group 31" transform="translate(-3679 -1122)">
                             <rect id="Rectangle_67" data-name="Rectangle 67" width="30" height="30" transform="translate(3679 1122)" fill="rgba(255,255,255,0)"/>
@@ -201,7 +239,7 @@ const ARButton = (props: any) => {
 
                       </button>
                     ) : (
-                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={handleDarkMode}>
+                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={() => handleDarkMode(currentColor)}>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
                         <g id="Group_32" data-name="Group 32" transform="translate(-3679 -1157)">
                           <rect id="Rectangle_66" data-name="Rectangle 66" width="30" height="30" transform="translate(3679 1157)" fill="rgba(255,255,255,0)"/>

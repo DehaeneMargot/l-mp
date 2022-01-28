@@ -133,7 +133,7 @@ const ProductDetail = (props:any) => {
                                         <div className="flex justify-between items-center">
                                             <p className="font-semibold text-3xl ">$ 80</p>
                                             <div className="md:space-x-2 spaxe-x-1 flex">
-                                                <ARButton/>
+                                                <ARButton lamp={currentLamp}/>
                                                 <button className="bg-orange-500 rounded-lg border-orange-500 border-2 px-4 py-2 mb-4 text-white font-semibold hover:bg-orange-400">
                                                     Add to Cart
                                                 </button>
