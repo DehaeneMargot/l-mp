@@ -11,8 +11,9 @@ const Home = () => {
                 <section className=" min-h-screen">
                     <div className="grid grid-cols-2 pt-20">
                         <div className="mt-44">
-                            <h1 className="lg:text-8xl md:text-4xl  font-semibold"><p className="font-bold">Customizable</p> Lamps</h1>
-                            <p className="pt-10 text-xl">Modern high quality and customizable or premade lamps.</p>
+                            <h1 className="lg:text-7xl md:text-4xl  font-semibold"><span className="font-bold">Homemade lamps</span> that brighten up your day</h1>
+                            <p className="mt-10 text-xl">Modern high quality and customizable or premade lamps.</p>
+                            <button className="bg-orange-500 hover:bg-orange-400 text-white px-6 py-3 rounded-md mt-16 font-semibold" >Discover lamps</button>
                         </div>
                         <div><svg className="absolute -top-10 lg:-top-28 lg:right-20 ml-auto mr-auto left-0 lg:left-auto right-0 lg:w-lamp w-72" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 675.971 1190.601">
                             <defs>

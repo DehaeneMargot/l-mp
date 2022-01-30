@@ -61,20 +61,12 @@ const ARButton = (props: any) => {
           setArSupported(supported);
           const loader = new GLTFLoader();
           loader.load(
-            "/models/lamp/LAMP_" +props.lamp.name+"_"+props.lamp.colors[0].name+".glb",
+            "/models/"+ props.lamp.name+ "/LAMP_" +props.lamp.name+"_"+props.lamp.colors[0].name+".glb",
             (gltf) => {
               const mesh = gltf.scene;
               mesh.rotateY(rotationValue);
               mesh.traverse( function( node ) {
                 node.castShadow = true;
-              });
-              console.log("test")
-              mesh.traverse((node) => {
-                if (node instanceof THREE.Mesh) {
-                  if (node.name === "BULB") {
-                    node.castShadow = false;
-                  }
-                } 
               });
 
               createSessionIfSupported(mesh).then((renderer) => {
@@ -92,6 +84,28 @@ const ARButton = (props: any) => {
     return new Promise((resolve, reject) => {
         loader.load(modelLocation, (gltf) => {
             const newModel = gltf.scene
+
+            newModel.traverse((node) => {
+              if (node instanceof THREE.Mesh) {
+                node.receiveShadow = false;
+                node.castShadow = false;
+                
+              } 
+            });
+
+            // newModel.traverse((node) => {
+            //   if (node instanceof THREE.Material) {
+            //     node.hasTransmission
+                
+            //   } 
+            // });
+
+
+            // newModel.traverse((node) => {
+            //   if (node instanceof THREE.Mesh) {
+            //     node.material.alphaTest = 0.5;
+            //   } 
+            // });
             resolve(newModel)
         })
     })
@@ -135,13 +149,15 @@ const ARButton = (props: any) => {
       let selectedColor = props.lamp.colors.find((i:any) => i.name === currentColor);
       let selectedModel = selectedColor.modelLink;
       let mesh = await loadModel(selectedModel);
-      changeModel(mesh);
+      changeModel(mesh, false);
     } else {
       setDarkmodeOn(true);
       let selectedColor = props.lamp.colors.find((i:any) => i.name === currentColor);
+      console.log(selectedColor)
       let selectedModel = selectedColor.darkModelLink;
+      console.log(selectedModel)
       let mesh = await loadModel(selectedModel);
-      changeModel(mesh);
+      changeModel(mesh, true);
     }
   }
 
@@ -150,11 +166,11 @@ const ARButton = (props: any) => {
     if (darkmodeOn) {
       let selectedModel = selectedColor.darkModelLink;
       let mesh = await loadModel(selectedModel);
-      changeModel(mesh);
+      changeModel(mesh, true);
     } else {
       let selectedModel = selectedColor.modelLink;
       let mesh = await loadModel(selectedModel);
-      changeModel(mesh);
+      changeModel(mesh, false);
     }
 
   }
@@ -167,15 +183,18 @@ const ARButton = (props: any) => {
             <button
               className={`${
                 arSupported ? "bg-red-500" : "hidden"
-              } bg-transparent border-orange-500 border-2 rounded-lg px-4 py-2 md:mr-0 mr-4 mb-4 text-orange-500 font-semibold`}
+              } flex space-x-2 bg-transparent border-orange-500 border-2 rounded-lg px-4 py-2 md:mr-0 mr-4 text-orange-500 font-semibold`}
               onClick={startSession}
             >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+              </svg>
               <p>View in AR</p>
             </button>
           )}
 
-          <div ref={overlay} className="hidden pointer-events-none ">
-            <div>
+          <div ref={overlay} className="hidden pointer-events-none">
+            <div className="">
               <div className="flex justify-between">
               <div className="m-4 test">
                 {props.lamp.colors.map((item:any, index:number) => (
@@ -267,9 +286,12 @@ const ARButton = (props: any) => {
         </div>
       ) : (
         <button
-          className="bg-transparent border-orange-500 border-2 rounded-lg px-4 py-2 md:mr-0 mr-4 mb-4 text-orange-500 font-semibold"
+          className="flex bg-transparent border-orange-500 space-x-2 border-2 rounded-lg px-4 py-2 md:mr-0 mr-4 text-orange-500 font-semibold"
           onClick={viewQR}
         >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+          </svg>
           <p>View in AR</p>
         </button>
       )}

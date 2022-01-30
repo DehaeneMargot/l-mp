@@ -3,6 +3,7 @@ import { Color, LightProbe, MeshStandardMaterial, Object3D, Vector3 } from "thre
 import { SessionLightProbe, XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight';
 import { ARButton } from 'three/examples/jsm/webxr/ARButton';
 
+
 export const useAR = (() => {
   let arSupported;
   let renderer: any = undefined;
@@ -18,6 +19,12 @@ export const useAR = (() => {
   let defaultEnvironment: any;
   let plane: any;
   let planeCreated: boolean;
+  let light:any;
+  let testCone: any;
+  let camera: THREE.PerspectiveCamera;
+  let dark: THREE.Mesh;
+  let darkMode: boolean;
+  let secondDark: THREE.Mesh;
   // let bulbLight: any;
   // let bulbMat: any;
   let spotLight, lightHelper, shadowCameraHelper;
@@ -41,7 +48,7 @@ export const useAR = (() => {
 
   const initLights = (scene: THREE.Scene) => {
     // TEST 1
-    const light = new THREE.PointLight(0xffffbb, 0x080820, 1);
+    const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     light.position.set(0.5, 0, 0.25);
     scene.add(light);
 
@@ -82,11 +89,11 @@ export const useAR = (() => {
 
   const clearChildren = async () => {
     if (scene) {
-      scene?.children.forEach((child: any) => {
-        console.log(child);
-        scene!.remove(child);
+      scene.children.forEach((child: any) => {
+        if (child.name !== 'reticle') {
+					scene!.remove(child)
+				}
       });
-      console.log(scene?.children)
 
       initLights(scene);
     }
@@ -111,6 +118,99 @@ export const useAR = (() => {
     rotationValue = rotationValue + 1;
   }
 
+  function updateEnvironment( envMap:any ) {
+    scene!.traverse( function ( object:any ) {
+      if ( object.isMesh ) object.material.envMap = envMap;
+    } );
+
+  }
+
+  const onSelect = () => {
+    if (reticle.visible) {
+      if (modelPlaced == false) {
+        currentModel.position.setFromMatrixPosition(reticle.matrix);
+        currentModel.quaternion.setFromRotationMatrix(reticle.matrix);
+        //testCone.position.setFromMatrixPosition(reticle.matrix);
+        if(!scene?.getObjectByName("model")) {
+          if (reticle.visible) {
+            //light.position.set(reticle.matrix.x)
+            scene?.getObjectByName("plane")?.removeFromParent();
+            addPlaneToSceneThatReceivesShadows(reticle.position);
+            scene!.add(currentModel);
+            console.log("placed");
+            scene?.getObjectByName("reticle")?.removeFromParent();
+          }
+        } else {
+          let x = scene!.getObjectByName("model");
+          x?.updateMatrixWorld()
+          x?.updateMatrix()
+          x!.visible = true;
+          reticleEnabled = false;
+        }
+        modelPlaced = true;
+        scene?.getObjectByName("reticle")?.removeFromParent();
+      }
+    }
+  };
+
+
+  // Rotate object to right
+  const rotateRight = () => {
+    if(currentModel){
+      currentModel.rotateY(10);
+    }
+  }
+
+  // Rotate object to left
+  const rotateLeft = () => {
+    
+    // if(currentModel){
+    //   currentModel.rotateY(-10);
+    // }
+  }
+
+  // Change the model
+  const changeModel = (model: THREE.Object3D, darkModeState: boolean) => {
+    darkMode = darkModeState;
+    let lastLocation:Vector3 = currentModel.position;
+    let x = scene?.getObjectByName("model");
+    x?.removeFromParent();
+
+    model.traverse( function( node ) {
+      node.castShadow = true;
+    });
+
+    model.traverse((node) => {
+      if (node instanceof THREE.Mesh) {
+        if (node.name === "BULB") {
+          node.castShadow = false;
+        }
+      } 
+    });
+    
+    scene?.add(model);
+    model.position.setFromMatrixPosition(currentModel.matrixWorld)
+    model.quaternion.setFromRotationMatrix(currentModel.matrixWorld);
+    model.name = "model";
+    currentModel = model;
+  }
+
+  // Shadows
+  const addPlaneToSceneThatReceivesShadows = (position:any) => {
+    const geometry = new THREE.PlaneGeometry(80,80);
+    geometry.rotateX(-Math.PI / 2);
+    const material = new THREE.ShadowMaterial();
+    material.opacity = 0.5;
+    
+    plane = new THREE.Mesh(geometry, material);
+    plane.position.set(position);
+    plane.name = "plane";
+    plane.receiveShadow = true;
+    plane.visible = false;
+    plane.matrixAutoUpdate = false;
+    scene?.add(plane);
+  }
+
   const initScene = (model: Object3D) => {
     const container = document.createElement("div");
     arContainer = container;
@@ -120,7 +220,7 @@ export const useAR = (() => {
 
     // == BASICS == 
     // Camera
-    let camera = new THREE.PerspectiveCamera(
+    camera = new THREE.PerspectiveCamera(
       70,
       window.innerWidth / window.innerHeight,
       0.01,
@@ -133,21 +233,6 @@ export const useAR = (() => {
 
     initLights(sc);
 
-    const addPlaneToSceneThatReceivesShadows = () => {
-      const geometry = new THREE.PlaneGeometry(80,80);
-      geometry.rotateX(-Math.PI / 2);
-      const material = new THREE.ShadowMaterial();
-      material.opacity = 0.5;
-  
-      plane = new THREE.Mesh(geometry, material);
-      plane.receiveShadow = true;
-      plane.visible = false;
-      plane.matrixAutoUpdate = false;
-      sc.add(plane);
-    }
-  
-    addPlaneToSceneThatReceivesShadows();
-
     // Renderer
     let x = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     x.setPixelRatio(window.devicePixelRatio);
@@ -159,6 +244,27 @@ export const useAR = (() => {
     x.xr.enabled = true;
     container.appendChild( x.domElement );
 
+    dark = new THREE.Mesh(
+      new THREE.TorusGeometry(20, 30, 16, 100).rotateX(-Math.PI / 2),
+      new THREE.MeshBasicMaterial({color: 0x000000, opacity:0.6})
+    );
+    dark.matrixAutoUpdate = true;
+    dark.visible = false;
+    dark.name = "dark";
+    dark.position.set(0, 0, -2);
+    sc.add(dark);
+
+    // secondDark = new THREE.Mesh(
+    //   new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
+    //   new THREE.MeshBasicMaterial({color: 0x000000, opacity:0.6})
+    // );
+    // secondDark.matrixAutoUpdate = true;
+    // secondDark.visible = false;
+    // secondDark.name = "seconddark";
+    // secondDark.position.set(0, 0, 2);
+    // sc.add(secondDark);
+
+    // Reticle
     reticle = new THREE.Mesh(
       new THREE.RingBufferGeometry(0.10, 0.15, 32).rotateX(-Math.PI / 2),
       new THREE.MeshBasicMaterial()
@@ -167,6 +273,19 @@ export const useAR = (() => {
     reticle.visible = false;
     reticle.name = "reticle";
     sc.add(reticle);
+
+    addPlaneToSceneThatReceivesShadows(model.position);
+
+
+    const testLight = () => {
+      const geometry = new THREE.ConeGeometry( 5, 2, 3 );
+      const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+      testCone = new THREE.Mesh( geometry, material );
+
+      sc.add(testCone);
+    }
+
+    //testLight();
 
     // Light estimation
     const xrLight = new XREstimatedLight( x );
@@ -201,7 +320,8 @@ export const useAR = (() => {
       // Revert back to the default environment.
       updateEnvironment( defaultEnvironment );
     } );
-
+    
+    // Model
     model.name = "model";
     model.rotateY(rotationValue);
     currentModel = model;
@@ -230,16 +350,18 @@ export const useAR = (() => {
 
     //Create a SpotLight and turn on shadows for the light
     // THIS TURNS SHADOWS ON
-    const light = new THREE.SpotLight( 0xffffff );
+    light = new THREE.SpotLight( 0xffffff, 1, 1000 );
+    light.name = "mainLight";
+    light.position.set(0,1,0)
     light.castShadow = true; // default false
     sc.add( light );
 
     //Set up shadow properties for the light
-    // light.shadow.mapSize.width = 512; // default
-    // light.shadow.mapSize.height = 512; // default
-    // light.shadow.camera.near = 0.5; // default
-    // light.shadow.camera.far = 500; // default
-    // light.shadow.focus = 1; // default
+    light.shadow.mapSize.width = 2048;
+    light.shadow.mapSize.height = 2048;
+    light.shadow.camera.near = 0.5;
+    light.shadow.camera.far = 1000;
+    light.shadow.focus = 1; // default
 
     //Create a sphere that cast shadows (but does not receive them)
     // const sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
@@ -274,6 +396,7 @@ export const useAR = (() => {
     // let controller = x.xr.getController(0);
     // controller.addEventListener("select", onSelect);
     // sc.add(controller);
+    scene = sc;
 
     x.setAnimationLoop((timestamp, frame) => {
       if (frame) {
@@ -311,10 +434,8 @@ export const useAR = (() => {
             );
 
             plane.visible = true;
-            //if (!planeCreated) {
-              plane.matrix.fromArray(hit.getPose(referenceSpace!)!.transform.matrix);
-              planeCreated = true;
-            //}
+            plane.matrix.fromArray(hit.getPose(referenceSpace!)!.transform.matrix);
+            planeCreated = true;
           } else {
             reticle.visible = false;
           }
@@ -323,6 +444,17 @@ export const useAR = (() => {
 
       //light.position.set(- xrLight.directionalLight.position.x, xrLight.directionalLight.position.y, xrLight.directionalLight.position.z);
       //console.log(light.position)
+      if (darkMode) {
+        dark.visible = true;
+        //secondDark.visible = true;
+        dark.position.set(camera.position.x, camera.position.y, camera.position.z);
+        dark.rotation.set(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+      } else {
+        dark.visible = false;
+        //secondDark.visible = false;
+      }
+
+
       x.render(scene!, camera);
     }); 
     renderer = x;
@@ -335,82 +467,8 @@ export const useAR = (() => {
       x.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener("resize", onWindowResize);
-    scene = sc;
     return x;
   };
-
-  function updateEnvironment( envMap:any ) {
-    scene!.traverse( function ( object:any ) {
-      if ( object.isMesh ) object.material.envMap = envMap;
-    } );
-
-  }
-
-  const onSelect = () => {
-    if (reticle.visible) {
-      if (modelPlaced == false) {
-        currentModel.position.setFromMatrixPosition(reticle.matrix);
-        plane.position.setFromMatrixPosition(reticle.matrix);
-        currentModel.quaternion.setFromRotationMatrix(reticle.matrix);
-        //.add(new Vector3(0, 0.5, 0));
-        if(!scene?.getObjectByName("model")) {
-          if (reticle.visible) {
-            scene!.add(currentModel);
-            console.log("placed");
-            scene?.getObjectByName("reticle")?.removeFromParent();
-          }
-        } else {
-          let x = scene?.getObjectByName("model");
-          x!.visible = true;
-          reticleEnabled = false;
-        }
-        modelPlaced = true;
-        scene?.getObjectByName("reticle")?.removeFromParent();
-      }
-    }
-  };
-
-
-  // Rotate object to right
-  const rotateRight = () => {
-    if(currentModel){
-      currentModel.rotateY(10);
-    }
-  }
-
-  // Rotate object to left
-  const rotateLeft = () => {
-    if(currentModel){
-      currentModel.rotateY(-10);
-    }
-  }
-
-  // Change the model
-  const changeModel = (model: THREE.Object3D) => {
-    let lastLocation:Vector3 = currentModel.position;
-    let x = scene?.getObjectByName("model");
-    x?.removeFromParent();
-
-    model.traverse( function( node ) {
-      node.castShadow = true;
-    });
-
-    model.traverse((node) => {
-      if (node instanceof THREE.Mesh) {
-        if (node.name === "BULB") {
-          node.castShadow = false;
-        }
-      } 
-    });
-    
-    scene?.add(model);
-
-    model.position.setFromMatrixPosition(currentModel.matrixWorld)
-    model.quaternion.setFromRotationMatrix(currentModel.matrixWorld);
-    //model.position.set(lastLocation);
-    model.name = "model";
-    currentModel = model;
-  }
 
   const createSessionIfSupported = (
     model: THREE.Object3D
