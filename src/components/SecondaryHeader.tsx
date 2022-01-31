@@ -29,10 +29,8 @@ const SecondaryHeader = (props: any) => {
     const handleScroll = () => {
         if (window.scrollY === 0) {
             if (!isAtTop) setIsAtTop(true);
-            console.log(isAtTop)
         } else {
             if (isAtTop) setIsAtTop(false);
-            console.log(isAtTop)
         }
     }
 
