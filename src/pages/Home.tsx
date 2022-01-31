@@ -3,6 +3,8 @@ import Footer from "../components/Footer"
 import Header from "../components/Header"
 import SecondaryHeader from "../components/SecondaryHeader"
 import { setGlobalState } from "../utils/globalState"
+import { Player, Controls } from '@lottiefiles/react-lottie-player';
+
 
 const Home = () => {
 
@@ -62,16 +64,30 @@ const Home = () => {
 
                         <div className="grid md:grid-cols-4 gap-10 pt-8 pb-14 p-6">
                             <div>
-                                <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all"></div>
+                                <div className="w-full bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
+                                <Player
+                                    autoplay
+                                    loop
+                                    src="https://assets9.lottiefiles.com/packages/lf20_ooptvpbj.json"
+                                >
+                                </Player>
+                                </div>
                                 <div className="flex justify-center font-semibold pt-6 pb-2 text-xl text-orange-400">
                                     Choose Lämp
                                 </div>
                                 <p className="text-center dark:text-white">
-                                    Choose your favorite Lämp for your room from all of our products on the webshop.
+                                    Choose your favorite Lämp for your room and see it turn on in dark mode.
                                 </p>
                             </div>
                             <div>
-                            <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all"></div>
+                            <div className="w-full bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
+                                <Player
+                                    autoplay
+                                    loop
+                                    src="https://assets7.lottiefiles.com/packages/lf20_9doq6m11.json"
+                                >
+                                </Player>
+                            </div>
                                 <div className="flex justify-center font-semibold pt-6 pb-2 text-xl text-orange-400">
                                     View in AR
                                 </div>
@@ -80,16 +96,30 @@ const Home = () => {
                                 </p>
                             </div>
                             <div>
-                            <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all"></div>
+                            <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
+                                <Player
+                                    autoplay
+                                    loop
+                                    src="https://assets7.lottiefiles.com/packages/lf20_spxc0jak.json"
+                                >
+                                </Player>
+                            </div>
                                 <div className="flex justify-center font-semibold pt-6 pb-2 text-xl text-orange-400">
                                     Add to cart
                                 </div>
                                 <p className="text-center dark:text-white">
-                                    Found what you were looking for? Add it to your cart and finish your payment.
+                                    Found the Lämp you were looking for? Add it to your cart and finish your payment.
                                 </p>
                             </div>
                             <div>
-                            <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all"></div>
+                            <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
+                                <Player
+                                    autoplay
+                                    loop
+                                    src="https://assets8.lottiefiles.com/packages/lf20_haeunqy4.json"
+                                >
+                                </Player>
+                            </div>
                                 <div className="flex justify-center font-semibold pt-6 pb-2 text-xl text-orange-400">
                                     Enjoy fast shipping
                                 </div>
@@ -130,7 +160,7 @@ const Home = () => {
                 </section>
             </main>
 
-            <footer className="dark:bg-zinc-900 bg-orange-500 h-auto">
+            <footer className="dark:bg-zinc-900 bg-neutral-100 h-auto">
                 <Footer />
             </footer>
 

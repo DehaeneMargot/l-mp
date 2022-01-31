@@ -65,7 +65,7 @@ const Products = () => {
             ) : (
                 <>
                     <SecondaryHeader/>
-                    <div className="h-screen bg-white dark:bg-zinc-900">
+                    <div className="md:h-screen bg-white dark:bg-zinc-900">
                         <div className="max-w-8xl w-full mx-auto p-4">
                             <div className="pt-20">
                                 
@@ -201,7 +201,7 @@ const Products = () => {
                             </div>
                         </div>
                     </div>
-                    <footer className="dark:bg-zinc-800 bg-orange-500 h-auto">
+                    <footer className="dark:bg-zinc-900 bg-neutral-100 h-auto">
                         <Footer />
                     </footer>
                 </>

@@ -61,6 +61,7 @@ const ProductDetail = (props:any) => {
     const handleColorOptions = (color:any) => {
         setCurrentColor(color.name)
         setSelectedImage(color.image)
+        setSelectedDarkImage(color.imageDark);
     }
 
 

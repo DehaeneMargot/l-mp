@@ -19,15 +19,16 @@ export const useAR = (() => {
   let defaultEnvironment: any;
   let plane: any;
   let planeCreated: boolean;
-  let light:any;
+  let light: THREE.SpotLight;
   let testCone: any;
   let camera: THREE.PerspectiveCamera;
   let dark: THREE.Mesh;
   let darkMode: boolean;
   let secondDark: THREE.Mesh;
+  let defaultLight: THREE.AmbientLight;
+  let hemispehereLight: THREE.HemisphereLight;
   // let bulbLight: any;
   // let bulbMat: any;
-  let spotLight, lightHelper, shadowCameraHelper;
 
   // const isARSupported = (): Promise<boolean> => {
   //   return new Promise((resolve, reject) => {
@@ -48,9 +49,9 @@ export const useAR = (() => {
 
   const initLights = (scene: THREE.Scene) => {
     // TEST 1
-    const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-    light.position.set(0.5, 0, 0.25);
-    scene.add(light);
+    hemispehereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    hemispehereLight.position.set(0.5, 0, 0.25);
+    scene.add(hemispehereLight);
 
     //TEST 2
     // const color = 0xFFFFFF;
@@ -122,7 +123,7 @@ export const useAR = (() => {
   }
 
   const updateRotation = () => {
-    rotationValue = rotationValue + 1;
+    rotationValue = rotationValue + 0.01;
   }
 
   function updateEnvironment( envMap:any ) {
@@ -164,7 +165,7 @@ export const useAR = (() => {
   // Rotate object to right
   const rotateRight = () => {
     if(currentModel){
-      currentModel.rotateY(10);
+      currentModel.rotateY(0.1);
     }
   }
 
@@ -172,7 +173,7 @@ export const useAR = (() => {
   const rotateLeft = () => {
     
     if(currentModel){
-      currentModel.rotateY(-10);
+      currentModel.rotateY(-0.1);
     }
   }
 
@@ -182,7 +183,11 @@ export const useAR = (() => {
 
     if (darkModeState === true) {
       scene?.getObjectByName("mainLight")?.removeFromParent();
+      defaultLight.intensity = 0.4;
+      hemispehereLight.intensity = 0.4;
     } else {
+      defaultLight.intensity = 1;
+      hemispehereLight.intensity = 1;
       scene?.add(light);
     }
     
@@ -237,8 +242,10 @@ export const useAR = (() => {
     );
 
     // Lighting
-    const defaultLight = new THREE.AmbientLight( 0xffffff );
+    defaultLight = new THREE.AmbientLight( 0xffffff );
     sc.add( defaultLight );
+
+    darkMode = false;
 
     initLights(sc);
 
@@ -363,6 +370,7 @@ export const useAR = (() => {
     light = new THREE.SpotLight( 0xffffff, 1, 1000 );
     light.name = "mainLight";
     light.position.set(0,1,0)
+    light.distance = 200;
     light.castShadow = true; // default false
     sc.add( light );
 

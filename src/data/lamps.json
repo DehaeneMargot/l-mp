@@ -10,40 +10,40 @@
                     "colorCode": "#93C572",
                     "modelLink": "/models/Pompidou/GREEN_OFF.glb",
                     "darkModelLink": "/models/Pompidou/GREEN_ON.glb",
-                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
-                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
+                    "image": "/models/Pompidou/POMPIDOU_GREEN_OFF.png",
+                    "imageDark": "/models/Pompidou/POMPIDOU_GREEN_ON.png"
                 },
                 {
                     "name": "RED",
                     "colorCode": "#FF0000",
                     "modelLink": "/models/Pompidou/RED_OFF.glb",
                     "darkModelLink": "/models/Pompidou/RED_ON.glb",
-                    "image": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg",
-                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
+                    "image": "/models/Pompidou/POMPIDOU_RED_OFF.png",
+                    "imageDark": "/models/Pompidou/POMPIDOU_RED_ON.png"
                 },
                 {
                     "name": "BLUE",
                     "colorCode": "#0055FF",
                     "modelLink": "/models/Pompidou/BLUE_OFF.glb",
                     "darkModelLink": "/models/Pompidou/BLUE_ON.glb",
-                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
-                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
+                    "image": "/models/Pompidou/POMPIDOU_BLUE_OFF.png",
+                    "imageDark": "/models/Pompidou/POMPIDOU_BLUE_ON.png"
                 },
                 {
                     "name": "WHITE",
                     "colorCode": "#EBEBEB",
                     "modelLink": "/models/Pompidou/WHITE_OFF.glb",
                     "darkModelLink": "/models/Pompidou/WHITE_ON.glb",
-                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
-                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
+                    "image": "/models/Pompidou/POMPIDOU_WHITE_OFF.png",
+                    "imageDark": "/models/Pompidou/POMPIDOU_WHITE_ON.png"
                 },
                 {
                     "name": "YELLOW",
                     "colorCode": "#FAE315",
                     "modelLink": "/models/Pompidou/YELLOW_OFF.glb",
                     "darkModelLink": "/models/Pompidou/YELLOW_ON.glb",
-                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
-                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
+                    "image": "/models/Pompidou/POMPIDOU_YELLOW_OFF.png",
+                    "imageDark": "/models/Pompidou/POMPIDOU_YELLOW_ON.png"
                 }
             ],
             "rating": 4.5,
@@ -55,16 +55,48 @@
         },
         {
             "id": "10360572-b8ef-4b51-b7a8-1edd3567e273",
-            "name": "Pompidu",
-            "category": "ceiling_lamps",
+            "name": "Bastille",
+            "category": "standing_lamps",
             "colors": [
                 {
                     "name": "GREEN",
                     "colorCode": "#93C572",
-                    "modelLink": "/models/lamp/LAMP_t6.glb",
-                    "darkModelLink": "/models/lamp/LAMP_t6_E.glb",
-                    "image": "/models/lamp/LAMP_Pompidou_image.jpeg",
-                    "imageDark": "/models/lamp/LAMP_Pompidou_image_dark.jpeg"
+                    "modelLink": "/models/Bastille/GREEN_OFF.glb",
+                    "darkModelLink": "/models/Bastille/GREEN_ON.glb",
+                    "image": "/models/Bastille/BASTILLE_GREEN_OFF.png",
+                    "imageDark": "/models/Bastille/BASTILLE_GREEN_ON.png"
+                },
+                {
+                    "name": "RED",
+                    "colorCode": "#FF0000",
+                    "modelLink": "/models/Bastille/RED_OFF.glb",
+                    "darkModelLink": "/models/Bastille/RED_ON.glb",
+                    "image": "/models/Bastille/BASTILLE_RED_OFF.png",
+                    "imageDark": "/models/Bastille/BASTILLE_RED_ON.png"
+                },
+                {
+                    "name": "BLUE",
+                    "colorCode": "#0055FF",
+                    "modelLink": "/models/Bastille/BLUE_OFF.glb",
+                    "darkModelLink": "/models/Bastille/BLUE_ON.glb",
+                    "image": "/models/Bastille/BASTILLE_BLUE_OFF.png",
+                    "imageDark": "/models/Bastille/BASTILLE_BLUE_ON.png"
+                },
+                {
+                    "name": "WHITE",
+                    "colorCode": "#EBEBEB",
+                    "modelLink": "/models/Bastille/WHITE_OFF.glb",
+                    "darkModelLink": "/models/Bastille/WHITE_ON.glb",
+                    "image": "/models/Bastille/BASTILLE_WHITE_OFF.png",
+                    "imageDark": "/models/Bastille/BASTILLE_WHITE_ON.png"
+                },
+                {
+                    "name": "YELLOW",
+                    "colorCode": "#FAE315",
+                    "modelLink": "/models/Bastille/YELLOW_OFF.glb",
+                    "darkModelLink": "/models/Bastille/YELLOW_ON.glb",
+                    "image": "/models/Bastille/BASTILLE_YELLOW_OFF.png",
+                    "imageDark": "/models/Bastille/BASTILLE_YELLOW_ON.png"
                 }
             ],
             "rating": 4.5,
@@ -82,10 +114,42 @@
                 {
                     "name": "GREEN",
                     "colorCode": "#93C572",
-                    "modelLink": "/models/Eiffel/LAMP_Eiffel_GREEN.glb",
-                    "darkModelLink": "/models/Eiffel/LAMP_Eiffel_GREEN_ON.glb",
-                    "image": "/models/lamp/LAMP_Pompidou_image.jpeg",
-                    "imageDark": "/models/lamp/LAMP_Pompidou_image_dark.jpeg"
+                    "modelLink": "/models/Eiffel/GREEN_OFF.glb",
+                    "darkModelLink": "/models/Eiffel/GREEN_ON.glb",
+                    "image": "/models/Eiffel/EIFFEL_GREEN_OFF.png",
+                    "imageDark": "/models/Eiffel/EIFFEL_GREEN_ON.png"
+                },
+                {
+                    "name": "RED",
+                    "colorCode": "#FF0000",
+                    "modelLink": "/models/Eiffel/RED_OFF.glb",
+                    "darkModelLink": "/models/Eiffel/RED_ON.glb",
+                    "image": "/models/Eiffel/EIFFEL_RED_OFF.png",
+                    "imageDark": "/models/Eiffel/EIFFEL_RED_ON.png"
+                },
+                {
+                    "name": "BLUE",
+                    "colorCode": "#0055FF",
+                    "modelLink": "/models/Eiffel/BLUE_OFF.glb",
+                    "darkModelLink": "/models/Eiffel/BLUE_ON.glb",
+                    "image": "/models/Eiffel/EIFFEL_BLUE_OFF.png",
+                    "imageDark": "/models/Eiffel/EIFFEL_BLUE_ON.png"
+                },
+                {
+                    "name": "WHITE",
+                    "colorCode": "#EBEBEB",
+                    "modelLink": "/models/Eiffel/WHITE_OFF.glb",
+                    "darkModelLink": "/models/Eiffel/WHITE_ON.glb",
+                    "image": "/models/Eiffel/EIFFEL_WHITE_OFF.png",
+                    "imageDark": "/models/Eiffel/EIFFEL_WHITE_ON.png"
+                },
+                {
+                    "name": "YELLOW",
+                    "colorCode": "#FAE315",
+                    "modelLink": "/models/Eiffel/YELLOW_OFF.glb",
+                    "darkModelLink": "/models/Eiffel/YELLOW_ON.glb",
+                    "image": "/models/Eiffel/EIFFEL_YELLOW_OFF.png",
+                    "imageDark": "/models/Eiffel/EIFFEL_YELLOW_ON.png"
                 }
             ],
             "rating": 4,

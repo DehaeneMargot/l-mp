@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors : {
+        'zinc-1000': 'rgb(14 14 16)'
+      },
       maxWidth: {
         '8xl': '90rem'
       },

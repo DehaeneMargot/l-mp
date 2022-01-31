@@ -11,8 +11,8 @@ const Footer = (props: any) => {
             <div className="space-y-6 max-w-8xl mx-auto p-8 relative h-full">
       <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
         <div>
-          <h1 className="font-semibold text-xl text-white dark:text-orange-500">Connect with us!</h1>
-          <h2 className="mt-1 text-white">
+          <h1 className="font-semibold text-xl  dark:text-orange-500">Connect with us!</h1>
+          <h2 className="mt-1 dark:text-white">
             Ask us questions through our social media or share your pictures
             with us.
           </h2>
@@ -67,29 +67,29 @@ const Footer = (props: any) => {
             </a>
           </div>
         </div>
-        <div className="grid grid-cols-2 text-white">
-          <div className="flex flex-col">
-            <h1 className="font-semibold pb-2 dark:text-orange-500">Explore</h1>
+        <div className="grid grid-cols-2">
+          <div className="flex flex-col dark:text-white">
+            <h1 className="font-semibold pb-2 text-orange-500">Explore</h1>
             <a href="">Home</a>
             <a href="">About us</a>
             <a href="">Team</a>
             <a href="">Careers</a>
           </div>
-          <div className="flex flex-col">
-            <h1 className="font-semibold pb-2 dark:text-orange-500">Legal</h1>
+          <div className="flex flex-col dark:text-white">
+            <h1 className="font-semibold pb-2 text-orange-500">Legal</h1>
             <a href="">Terms & conditions</a>
             <a href="">Privacy Policy</a>
             <a href="">Terms of use</a>
             <a href="">Contact</a>
           </div>
         </div>
-        <div className="text-white">
-          <h1 className="font-semibold pb-2 dark:text-orange-500">Newsletter</h1>
-          <p>Subscribe to the newsletter for weekly news and offers.</p>
+        <div>
+          <h1 className="font-semibold pb-2 text-orange-500">Newsletter</h1>
+          <p className="dark:text-white">Subscribe to the newsletter for weekly news and offers.</p>
           <div className="flex items-center justify-center space-x-2 mt-2">
-            <input type="text" placeholder={"Email Address"} className="text-black relative bg-neutral-100 dark:bg-zinc-700 w-full h-10 rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
+            <input type="text" placeholder={"Email Address"} className="text-black relative bg-white dark:bg-zinc-700 w-full h-10 rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
             <button className="h-10 w-12 dark:bg-white bg-zinc-900 rounded-md justify-center items-center flex">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 dark:stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 stroke-white dark:stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20" />
               </svg>
             </button>
@@ -98,9 +98,9 @@ const Footer = (props: any) => {
         </div>
       </div>
     </div>
-    <div className="bg-orange-600">
+    <div className="bg-neutral-200 dark:bg-zinc-1000">
       <div className="max-w-8xl mx-auto p-4 relative h-auto" > 
-        <h1 className="text-sm text-white text-center">
+        <h1 className="text-sm text-center font-semibold dark:text-white">
           Copyright © 2022 LÄMP. All Rights Reserved. Made with L♥VE.
         </h1>
       </div>
