@@ -1,15 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { setGlobalState, useGlobalState } from "../utils/globalState";
-import { useAR } from "../utils/useAR";
+import { useGlobalState } from "../utils/globalState";
 
 const SecondaryHeader = (props: any) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [productOptionsOpen, setProductOptionsOpen] = useState(false);
-    const [specificationsOpen, setSpecificationsOpen] = useState(false);
-    const [darkModeEnabled, setDarkModeEnabled] = useState<boolean>();
-    const [activePage, setActivePage] = useGlobalState("activePage");
+    const [activePage] = useGlobalState("activePage");
     const [backButton, setBackButton] = useState<boolean>();
     const [isAtTop, setIsAtTop] = useState(true);
     const navigate = useNavigate();
@@ -30,17 +26,8 @@ const SecondaryHeader = (props: any) => {
         }
     }
 
-    const handleSpecifications = () => {
-        if(!specificationsOpen) {
-            setSpecificationsOpen(true);
-            
-        } else {
-            setSpecificationsOpen(false);
-        }
-    }
-
     const handleScroll = () => {
-        if (window.scrollY == 0) {
+        if (window.scrollY === 0) {
             if (!isAtTop) setIsAtTop(true);
             console.log(isAtTop)
         } else {
@@ -52,8 +39,7 @@ const SecondaryHeader = (props: any) => {
     window.addEventListener('scroll', handleScroll);
 
     useEffect(() => {
-        if (activePage == "productdetail") {
-            console.log("test")
+        if (activePage === "productdetail") {
             setBackButton(true);
         } else {
             setBackButton(false);
@@ -65,13 +51,11 @@ const SecondaryHeader = (props: any) => {
             localStorage.setItem('theme', 'light');
             toggle!.checked = false;
             main?.classList.remove('dark');
-            setDarkModeEnabled(false);
         } else if(localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             localStorage.setItem('theme', 'dark');
             toggle!.checked = true;
             main?.classList.add('dark');
             toggle?.classList.add('checked');
-            setDarkModeEnabled(true);
         }
     }, [activePage])
 
@@ -81,12 +65,10 @@ const SecondaryHeader = (props: any) => {
         if (localStorage.theme === 'light') {
             main?.classList.add('dark');
             localStorage.setItem('theme', 'dark');
-            setDarkModeEnabled(true);
 
         } else if(localStorage.theme === 'dark' ) {
             main?.classList.remove('dark');
             localStorage.setItem('theme', 'light');
-            setDarkModeEnabled(false);
         }
     }
 

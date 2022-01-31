@@ -1,8 +1,3 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { useAR } from "../utils/useAR";
-
 const Footer = (props: any) => {
 
 
@@ -70,17 +65,17 @@ const Footer = (props: any) => {
         <div className="grid grid-cols-2">
           <div className="flex flex-col dark:text-white">
             <h1 className="font-semibold pb-2 text-orange-500">Explore</h1>
-            <a href="">Home</a>
-            <a href="">About us</a>
-            <a href="">Team</a>
-            <a href="">Careers</a>
+            <button className="text-left">Home</button>
+            <button className="text-left">About us</button>
+            <button className="text-left">Team</button>
+            <button className="text-left">Careers</button>
           </div>
           <div className="flex flex-col dark:text-white">
             <h1 className="font-semibold pb-2 text-orange-500">Legal</h1>
-            <a href="">Terms & conditions</a>
-            <a href="">Privacy Policy</a>
-            <a href="">Terms of use</a>
-            <a href="">Contact</a>
+            <button className="text-left">Terms & conditions</button>
+            <button className="text-left">Privacy Policy</button>
+            <button className="text-left">Terms of use</button>
+            <button className="text-left">Contact</button>
           </div>
         </div>
         <div>

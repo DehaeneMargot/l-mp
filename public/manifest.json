@@ -1,21 +1,33 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Lämp",
+  "name": "The website to buy and view lamps in AR.",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "images/logo/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+        "src": "/images/logo/android-chrome-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
     },
     {
-      "src": "logo512.png",
+        "src": "/images/logo/android-chrome-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    },
+    {
+      "src": "/images/logo/android-chrome-maskable-192x192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "sizes": "512x512"
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/logo/android-chrome-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "start_url": ".",

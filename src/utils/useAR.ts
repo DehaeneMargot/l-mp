@@ -1,11 +1,10 @@
 import * as THREE from "three";
-import { Color, LightProbe, MeshStandardMaterial, Object3D, Vector3 } from "three";
-import { SessionLightProbe, XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight';
-import { ARButton } from 'three/examples/jsm/webxr/ARButton';
+import { Object3D } from "three";
+import { XREstimatedLight } from 'three/examples/jsm/webxr/XREstimatedLight';
 
 
 export const useAR = (() => {
-  let arSupported;
+  // let arSupported;
   let renderer: any = undefined;
   let scene: THREE.Scene | undefined = undefined;
   let arContainer: any = undefined;
@@ -18,13 +17,12 @@ export const useAR = (() => {
   let reticleEnabled: boolean = false;
   let defaultEnvironment: any;
   let plane: any;
-  let planeCreated: boolean;
   let light: THREE.SpotLight;
-  let testCone: any;
+  // let testCone: any;
   let camera: THREE.PerspectiveCamera;
   let dark: THREE.Mesh;
   let darkMode: boolean;
-  let secondDark: THREE.Mesh;
+  // let secondDark: THREE.Mesh;
   let defaultLight: THREE.AmbientLight;
   let hemispehereLight: THREE.HemisphereLight;
   // let bulbLight: any;
@@ -135,7 +133,7 @@ export const useAR = (() => {
 
   const onSelect = () => {
     if (reticle.visible) {
-      if (modelPlaced == false) {
+      if (modelPlaced === false) {
         currentModel.position.setFromMatrixPosition(reticle.matrix);
         currentModel.quaternion.setFromRotationMatrix(reticle.matrix);
         //testCone.position.setFromMatrixPosition(reticle.matrix);
@@ -455,7 +453,7 @@ export const useAR = (() => {
               if ( !darkMode) {
                 plane.visible = true;
                 plane.matrix.fromArray(hit.getPose(referenceSpace!)!.transform.matrix);
-                planeCreated = true;
+                //planeCreated = true;
               }
             }, 500);
 

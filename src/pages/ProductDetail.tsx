@@ -1,44 +1,28 @@
 import { useEffect, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ARButton from "../components/ARButton"
 import SecondaryHeader from "../components/SecondaryHeader"
 import lamps from '../data/lamps.json';
 import Rating from '@mui/material/Rating';
 import { setGlobalState } from "../utils/globalState";
-import Footer from "../components/Footer";
-
-
 
 const ProductDetail = (props:any) => {
 
     const [loading, setLoading] = useState(true);
-    const [category, setCategory] = useState<string>();
-    const [allLamps, setAllLamps] = useState<Array<any>>([]);
     const [currentLamp, setCurrentLamp] = useState<any>();
     const [currentColor, setCurrentColor] = useState<any>();
     const [specificationsOpen, setSpecificationsOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState('');
     const [selectedDarkImage, setSelectedDarkImage] = useState('');
     const location = useLocation();
-    const [darkModeEnabled, setDarkModeEnabled] = useState<boolean>();
     
 
     useEffect(() => {
 		setGlobalState("activePage", "productdetail");
 	}, [])
 
-    const getCurrentLamp = async () => {
-        console.log("now this code")
-		const urlParams = new URLSearchParams(location.search)
-		let currentId = urlParams.get("id")!
-        let currentColor = urlParams.get("color")!
-        setCurrentColor(currentColor);
-        getProductById(currentId, currentColor);
-	}
-
     const getProductById = (currentId: string, currentColor: string) => {
         const lampsArray = lamps.lamps;
-        setAllLamps(lampsArray);
 
         let item = lampsArray.find(i => i.id === currentId);
         setCurrentLamp(item);
@@ -67,7 +51,11 @@ const ProductDetail = (props:any) => {
 
     useEffect(() => {
         async function start() {
-            await getCurrentLamp();
+            const urlParams = new URLSearchParams(location.search)
+            let currentId = urlParams.get("id")!
+            let currentColor = urlParams.get("color")!
+            setCurrentColor(currentColor);
+            getProductById(currentId, currentColor);
             setLoading(false);
         }
         start()
@@ -86,8 +74,8 @@ const ProductDetail = (props:any) => {
                         <div className="dark:bg-zinc-900 bg-white ">
                             <div className="  grid md:grid-cols-2 gap-6 px-4 mb-4 max-w-8xl w-full mx-auto pt-20 md:pt-24">
                                 <div className="relatives overflow-hidden dark:bg-zinc-800 bg-neutral-50 w-full h-full rounded-3xl flex justify-center items-center">
-                                    <img className="h-full hidden dark:block" src={selectedDarkImage}/>
-                                    <img className="h-full dark:hidden block" src={selectedImage} />
+                                    <img alt="Darkmode image" className="h-full hidden dark:block" src={selectedDarkImage}/>
+                                    <img alt="Image" className="h-full dark:hidden block" src={selectedImage} />
                                 </div>
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center">

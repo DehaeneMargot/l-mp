@@ -3,29 +3,21 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useAR } from "../utils/useAR";
 import QRCode from "react-qr-code";
-import { Link } from "react-router-dom";
-import { isIntersectionTypeNode } from "typescript";
 
 const ARButton = (props: any) => {
   const [arSupported, setArSupported] = useState(false);
-  const [sessionInit, setSessionInit] = useState<any>({});
+  const [sessionInit] = useState<any>({});
   const [currentSession, setCurrentSession] = useState<any>();
-  const [overlayShown, setOverlayShown] = useState(false);
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
-  const [isModelPlaced, setIsModelPlaced] = useState(false);
-  const [rotationValue, setRotationValue] = useState(0);
-  const [currentLamp, setCurrentLamp] = useState<any>({});
-  const [currentModel, setCurrentModel] = useState<any>(props.lamp.colors[0].modelLink);
+  const [rotationValue] = useState(0);
   const [darkmodeOn, setDarkmodeOn] = useState(false);
   const [QRVisible, setQRVisible] = useState(false);
-  const [colorOptionsOpen, setColorOptionsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const overlay = useRef<HTMLDivElement>(null);
   const {
     createSessionIfSupported,
     clearChildren,
-    updateRotation,
     updateMovement,
     rotateRight,
     rotateLeft,
@@ -35,11 +27,6 @@ const ARButton = (props: any) => {
   } = useAR;
 
   useEffect(() => {
-    initLamp();
-  }, [])
-
-  const initLamp = () =>{
-    console.log("hey")
     if (sessionInit.optionalFeatures === undefined) {
       sessionInit.optionalFeatures = [];
     }
@@ -74,7 +61,7 @@ const ARButton = (props: any) => {
           );
         });
     }
-  }
+  }, [])
 
   const loadModel = (modelLocation: string):Promise<THREE.Object3D> => {
     const loader = new GLTFLoader()
@@ -103,8 +90,6 @@ const ARButton = (props: any) => {
           renderer!.xr.setReferenceSpaceType("local");
           overlay.current!.classList.toggle("hidden");
 
-          setOverlayShown(true);
-
           setCurrentSession(session);
 
           const loader = new GLTFLoader();
@@ -128,7 +113,6 @@ const ARButton = (props: any) => {
   const closeSession = () => {
     clearChildren();
     currentSession.end();
-    setOverlayShown(false);
     setCurrentSession(undefined);
     // overlay.current!.classList.toggle("hidden");
   };

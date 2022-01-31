@@ -14,30 +14,22 @@ const Products = () => {
     const location = useLocation();
     const [allFilteredLamps, setAllFilteredLamps] = useState<Array<any>>([]);
     const [allLamps, setAllLamps] = useState<Array<any>>([]);
-    const [darkModeEnabled, setDarkModeEnabled] = useState<boolean>();
 
-    let allFilteredLampsTest:any = [];
     let filteredLamps:Array<any> = [];
 
     useEffect(() => {
 		setGlobalState("activePage", "products");
 	}, [])
 
-    const getCurrentCategory = async () => {
-        console.log("now this code")
-		const urlParams = new URLSearchParams(location.search)
-		let currentCategory = await urlParams.get("type")!
-        console.log(currentCategory)
-		setCategory(currentCategory);
-        getProducts(currentCategory);
-        let cased = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
-        let fullname = cased.split("_").join(" ");
-        setCategoryDisplayed(fullname);
-	}
-
     useEffect(() => {
         async function start() {
-            await getCurrentCategory();
+            const urlParams = new URLSearchParams(location.search)
+            let currentCategory = urlParams.get("type")!
+            setCategory(currentCategory);
+            getProducts(currentCategory);
+            let cased = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
+            let fullname = cased.split("_").join(" ");
+            setCategoryDisplayed(fullname);
             setLoading(false);
         }
         start()
@@ -48,7 +40,7 @@ const Products = () => {
         setAllLamps(lampsArray);
 
         lampsArray.forEach(lamp => {
-            if(lamp.category == currentCategory) {
+            if(lamp.category === currentCategory) {
                 filteredLamps.push(lamp)
             }
         });
@@ -69,7 +61,7 @@ const Products = () => {
                         <div className="max-w-8xl w-full mx-auto p-4">
                             <div className="pt-20">
                                 
-                                    {category == "all_lamps" ? (
+                                    {category === "all_lamps" ? (
                                         <>
                                         <div className="flex items-center space-x-2 pb-4">
                                             <h1 className="text-2xl md:text-3xl font-semibold dark:text-white">Lamps</h1>
@@ -118,8 +110,8 @@ const Products = () => {
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                                                             </svg>
                                                         </div>
-                                                        <img className="h-full hidden dark:block" src={item.colors[0].imageDark} />
-                                                        <img className="h-full dark:hidden block" src={item.colors[0].image} />
+                                                        <img alt="Dark image" className="h-full hidden dark:block" src={item.colors[0].imageDark} />
+                                                        <img alt="Image" className="h-full dark:hidden block" src={item.colors[0].image} />
                                                     </div>
                                                     <div className="p-2 md:p-4">
                                                         <h3 className="dark:text-white text-black text-lg text-left">
@@ -172,8 +164,8 @@ const Products = () => {
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                                                             </svg>
                                                         </div>
-                                                        <img className="h-full hidden dark:block" src={item.colors[0].imageDark} />
-                                                        <img className="h-full dark:hidden block" src={item.colors[0].image} />
+                                                        <img alt="Dark image" className="h-full hidden dark:block" src={item.colors[0].imageDark} />
+                                                        <img alt="Image" className="h-full dark:hidden block" src={item.colors[0].image} />
                                                     </div>
                                                     <div className="p-2 md:p-4">
                                                         <h3 className="dark:text-white text-black text-lg text-left">

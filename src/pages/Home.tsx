@@ -1,9 +1,8 @@
 import { useEffect } from "react"
 import Footer from "../components/Footer"
-import Header from "../components/Header"
 import SecondaryHeader from "../components/SecondaryHeader"
 import { setGlobalState } from "../utils/globalState"
-import { Player, Controls } from '@lottiefiles/react-lottie-player';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 
 const Home = () => {
