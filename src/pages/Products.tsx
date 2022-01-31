@@ -2,8 +2,10 @@ import SecondaryHeader from "../components/SecondaryHeader";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import lamps from '../data/lamps.json';
+import { setGlobalState } from "../utils/globalState";
+import Footer from "../components/Footer";
 
-const Home = () => {
+const Products = () => {
 
     let navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -16,6 +18,10 @@ const Home = () => {
 
     let allFilteredLampsTest:any = [];
     let filteredLamps:Array<any> = [];
+
+    useEffect(() => {
+		setGlobalState("activePage", "products");
+	}, [])
 
     const getCurrentCategory = async () => {
         console.log("now this code")
@@ -49,11 +55,9 @@ const Home = () => {
         setAllFilteredLamps(filteredLamps);
     }
 
-    
-
 
     return (
-        <div id="main">
+        <div id="main" className="">
             {loading ? (
                 <div>
                     Loading
@@ -72,27 +76,31 @@ const Home = () => {
                                         </div>
 
                                         <form className="flex items-center space-x-4 mb-8">
-                                            <input type="text" placeholder={"Search for Lämps..."} className="bg-neutral-200 dark:bg-zinc-800 w-full h-full pl-12  rounded-md p-3 border dark:border-zinc-800 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
+
+                                            <input type="text" placeholder={"Search for Lämps..."} className="relative bg-neutral-100 dark:bg-zinc-800 w-full h-full pl-12  rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="absolute h-6 w-6 dark:stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
                                         </form>
 
-                                        <div className="grid grid-cols-5 gap-8 mb-4">
-                                            <Link replace to="/lamps?type=table_lamps" className="dark:bg-zinc-800 bg-neutral-100 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
+                                        <div className="overflow-x-auto flex md:grid md:grid-cols-5 md:gap-8 mb-4 snap-x scrollbar">
+                                            <Link replace to="/lamps?type=table_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
                                                 <p className="font-semibold text-lg dark:text-white">Table lamps</p>
                                                 <img draggable="false" className="select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/tablelamp.svg" alt="" />
                                             </Link>
-                                            <Link replace to="/lamps?type=desk_lamps" className="dark:bg-zinc-800 bg-neutral-100 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
+                                            <Link replace to="/lamps?type=desk_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
                                                 <p className="font-semibold text-lg dark:text-white">Desk lamps</p>
                                                 <img draggable="false" className="select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/desklamp.svg" alt="" />
                                             </Link>
-                                            <Link replace to="/lamps?type=standing_lamps" className="dark:bg-zinc-800 bg-neutral-100 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
+                                            <Link replace to="/lamps?type=standing_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
                                                 <p className="font-semibold text-lg dark:text-white">Standing lamps</p>
                                                 <img draggable="false" className="select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/standinglamp.svg" alt="" />
                                             </Link>
-                                            <Link replace to="/lamps?type=ceiling_lamps" className="dark:bg-zinc-800 bg-neutral-100 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
+                                            <Link replace to="/lamps?type=ceiling_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
                                                 <p className="font-semibold text-lg dark:text-white">Ceiling lamps</p>
                                                 <img draggable="false" className="select-none h-20 w-20 absolute right-4 top-0" src="/images/categories/ceilinglamp.svg" alt="" />
                                             </Link>
-                                            <Link replace to="/lamps?type=wall_lamps" className="dark:bg-zinc-800 bg-neutral-100 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
+                                            <Link replace to="/lamps?type=wall_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
                                                 <p className="font-semibold text-lg dark:text-white">Wall lamps</p>
                                                 <img draggable="false" className="select-none h-20 w-20 absolute right-4 top-0 " src="/images/categories/walllamp.svg" alt="" />
                                             </Link>
@@ -103,9 +111,15 @@ const Home = () => {
                                         <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-8 gap-4" >
                                             {allLamps.map((item: any) => (
                                                 <button className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg">
-                                                    <div className="dark:bg-black bg-neutral-50 rounded-lg flex justify-center items-center overflow-hidden cursor-pointer -mb-2" onClick={() => navigate(`detail?id=${item.id}`)}>
-                                                        <img className="h-full hidden dark:block" src={item.imageDark} />
-                                                        <img className="h-full dark:hidden block" src={item.image} />
+                                                    <div className="relative dark:bg-black bg-neutral-50 rounded-lg flex justify-center items-center overflow-hidden cursor-pointer -mb-2" onClick={() => navigate(`detail?id=${item.id}&color=${item.colors[0].name}`)}>
+                                                        <div className="absolute top-2 right-2 flex space-x-1 text-white font-semibold text-lg items-center">
+                                                            <p>{item.colors.length}</p>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                                                            </svg>
+                                                        </div>
+                                                        <img className="h-full hidden dark:block" src={item.colors[0].imageDark} />
+                                                        <img className="h-full dark:hidden block" src={item.colors[0].image} />
                                                     </div>
                                                     <div className="p-2 md:p-4">
                                                         <h3 className="dark:text-white text-black text-lg text-left">
@@ -132,8 +146,8 @@ const Home = () => {
                                     ) : (
                                         <>
                                         <div className="flex items-center space-x-2 pb-4">
-                                            <Link replace to="/lamps?type=all_lamps" className="text-2xl md:text-3xl font-semibold">Lamps</Link>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <Link replace to="/lamps?type=all_lamps" className="text-2xl md:text-3xl font-semibold dark:text-white">Lamps</Link>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 dark:stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                             </svg>
                                             {category != null && (
@@ -141,22 +155,32 @@ const Home = () => {
                                             )}
                                         </div>
 
-                                        <form className="flex items-center space-x-4 mb-4">
-                                            <input type="text" placeholder={"Search for Lämps..."} className="bg-neutral-200 searchbar w-full h-full pl-12  rounded-md p-3 border border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
+                                        <form className="flex items-center space-x-4 mb-8">
+                                            <input type="text" placeholder={"Search for Lämps..."} className="relative bg-neutral-100 dark:bg-zinc-800 w-full h-full pl-12  rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="absolute h-6 w-6 dark:stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
                                         </form>
                                         
                                         <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-8 gap-4" >
                                             {allFilteredLamps.map((item: any) => (
-                                                <button className="bg-white rounded-lg shadow-lg">
-                                                    <div className="bg-neutral-50 rounded-lg flex justify-center items-center overflow-hidden cursor-pointer -mb-2" onClick={() => navigate(`detail?id=${item.id}`)}>
-                                                        <img className="h-full" src={item.image} />
+                                                <button className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg">
+                                                    <div className="relative dark:bg-black bg-neutral-50 rounded-lg flex justify-center items-center overflow-hidden cursor-pointer -mb-2" onClick={() => navigate(`detail?id=${item.id}&color=${item.colors[0].name}`)}>
+                                                        <div className="absolute top-2 right-2 flex space-x-1 text-white font-semibold text-lg items-center">
+                                                            <p>{item.colors.length}</p>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                                                            </svg>
+                                                        </div>
+                                                        <img className="h-full hidden dark:block" src={item.colors[0].imageDark} />
+                                                        <img className="h-full dark:hidden block" src={item.colors[0].image} />
                                                     </div>
                                                     <div className="p-2 md:p-4">
-                                                        <h3 className="text-black text-lg text-left">
+                                                        <h3 className="dark:text-white text-black text-lg text-left">
                                                             {item.name}
                                                         </h3>
                                                         <div className="flex justify-between items-center">
-                                                            <p className="font-bold text-2xl" >
+                                                            <p className="font-bold text-2xl dark:text-white" >
                                                             € {item.price}
                                                             </p>
                                                             <button className="rounded-full bg-orange-500 p-3 flex justify-center items-center hover:bg-orange-400">
@@ -177,6 +201,9 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
+                    <footer className="dark:bg-zinc-800 bg-orange-500 h-auto">
+                        <Footer />
+                    </footer>
                 </>
             )}  
         </div>
@@ -184,4 +211,4 @@ const Home = () => {
 
 }
 
-export default Home
+export default Products

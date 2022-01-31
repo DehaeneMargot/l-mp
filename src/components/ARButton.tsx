@@ -4,13 +4,13 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useAR } from "../utils/useAR";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
+import { isIntersectionTypeNode } from "typescript";
 
 const ARButton = (props: any) => {
   const [arSupported, setArSupported] = useState(false);
   const [sessionInit, setSessionInit] = useState<any>({});
   const [currentSession, setCurrentSession] = useState<any>();
   const [overlayShown, setOverlayShown] = useState(false);
-  const [container, setContainer] = useState<HTMLDivElement>();
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
   const [isModelPlaced, setIsModelPlaced] = useState(false);
   const [rotationValue, setRotationValue] = useState(0);
@@ -19,31 +19,27 @@ const ARButton = (props: any) => {
   const [darkmodeOn, setDarkmodeOn] = useState(false);
   const [QRVisible, setQRVisible] = useState(false);
   const [colorOptionsOpen, setColorOptionsOpen] = useState(false);
-  const [currentColor, setCurrentColor] = useState<any>(props.lamp.colors[0].name);
-
+  const [loading, setLoading] = useState(true);
 
   const overlay = useRef<HTMLDivElement>(null);
   const {
     createSessionIfSupported,
-    getARContainer,
     clearChildren,
     updateRotation,
     updateMovement,
     rotateRight,
     rotateLeft,
     changeModel,
-    onSelect
+    onSelect,
+    initScene
   } = useAR;
 
   useEffect(() => {
-
-    initLamp()
-
+    initLamp();
   }, [])
 
-
   const initLamp = () =>{
-
+    console.log("hey")
     if (sessionInit.optionalFeatures === undefined) {
       sessionInit.optionalFeatures = [];
     }
@@ -54,14 +50,16 @@ const ARButton = (props: any) => {
     sessionInit.optionalFeatures.push('light-estimation');
     sessionInit.requiredFeatures.push("hit-test");
     sessionInit.domOverlay = { root: overlay.current! };
+
     if ("xr" in navigator) {
       (navigator as any).xr
         .isSessionSupported("immersive-ar")
         .then((supported: any) => {
           setArSupported(supported);
+
           const loader = new GLTFLoader();
           loader.load(
-            "/models/"+ props.lamp.name+ "/LAMP_" +props.lamp.name+"_"+props.lamp.colors[0].name+".glb",
+            "/models/"+props.lamp.name+"/"+props.color+"_OFF.glb",
             (gltf) => {
               const mesh = gltf.scene;
               mesh.rotateY(rotationValue);
@@ -71,7 +69,6 @@ const ARButton = (props: any) => {
 
               createSessionIfSupported(mesh).then((renderer) => {
                 setRenderer(renderer);
-                setContainer(getARContainer());
               });
             }
           );
@@ -85,33 +82,13 @@ const ARButton = (props: any) => {
         loader.load(modelLocation, (gltf) => {
             const newModel = gltf.scene
 
-            newModel.traverse((node) => {
-              if (node instanceof THREE.Mesh) {
-                node.receiveShadow = false;
-                node.castShadow = false;
-                
-              } 
-            });
-
-            // newModel.traverse((node) => {
-            //   if (node instanceof THREE.Material) {
-            //     node.hasTransmission
-                
-            //   } 
-            // });
-
-
-            // newModel.traverse((node) => {
-            //   if (node instanceof THREE.Mesh) {
-            //     node.material.alphaTest = 0.5;
-            //   } 
-            // });
             resolve(newModel)
         })
     })
   }
 
-  const startSession = () => {
+  const startSession = async () => {
+    setLoading(true);
     if (arSupported && currentSession === undefined) {
       sessionInit.domOverlay = { root: overlay.current! };
       (navigator as any).xr
@@ -127,16 +104,33 @@ const ARButton = (props: any) => {
           overlay.current!.classList.toggle("hidden");
 
           setOverlayShown(true);
+
           setCurrentSession(session);
 
+          const loader = new GLTFLoader();
+          loader.load(
+            "/models/"+props.lamp.name+"/"+props.color+"_OFF.glb",
+            (gltf) => {
+              const mesh = gltf.scene;
+              mesh.rotateY(rotationValue);
+              mesh.traverse( function( node ) {
+                node.castShadow = true;
+              });
+              initScene(mesh);
+            })
+
           await renderer!.xr.setSession(session);
+          setLoading(false);
         });
     }
   };
 
   const closeSession = () => {
+    clearChildren();
     currentSession.end();
     setOverlayShown(false);
+    setCurrentSession(undefined);
+    // overlay.current!.classList.toggle("hidden");
   };
 
   const viewQR = () => {
@@ -153,16 +147,13 @@ const ARButton = (props: any) => {
     } else {
       setDarkmodeOn(true);
       let selectedColor = props.lamp.colors.find((i:any) => i.name === currentColor);
-      console.log(selectedColor)
       let selectedModel = selectedColor.darkModelLink;
-      console.log(selectedModel)
       let mesh = await loadModel(selectedModel);
       changeModel(mesh, true);
     }
   }
 
-  const handleColorOptions = async (selectedColor:any) => {
-    setCurrentColor(selectedColor.name)
+  const changeColor = async (selectedColor:any) => {
     if (darkmodeOn) {
       let selectedModel = selectedColor.darkModelLink;
       let mesh = await loadModel(selectedModel);
@@ -183,7 +174,7 @@ const ARButton = (props: any) => {
             <button
               className={`${
                 arSupported ? "bg-red-500" : "hidden"
-              } flex space-x-2 bg-transparent border-orange-500 border-2 rounded-lg px-4 py-2 md:mr-0 mr-4 text-orange-500 font-semibold`}
+              } flex space-x-2 bg-transparent border-orange-500 border-2 items-center justify-center rounded-lg w-full h-full md:mr-0 mr-4 text-orange-500 font-semibold`}
               onClick={startSession}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -192,37 +183,28 @@ const ARButton = (props: any) => {
               <p>View in AR</p>
             </button>
           )}
-
-          <div ref={overlay} className="hidden pointer-events-none">
-            <div className="">
+            <div ref={overlay} className="hidden pointer-events-none ">
+            {loading ? (
+            <div>Loading</div>
+          ): (
+            <div>
               <div className="flex justify-between">
-              <div className="m-4 test">
-                {props.lamp.colors.map((item:any, index:number) => (
-                  <div>
-                    <input defaultChecked={index === 0} className="hidden peer" type="radio" name="color" id={item.name} value={item.name} onChange={() => {handleColorOptions(item)}}/>
-                    <label className="inline-block w-8 h-8 mr-3 pointer-events-auto peer-checked:ring-neutral-100 peer-checked:ring-4 rounded-full" htmlFor={item.name}><span className="block rounded-full w-full h-full" style={{backgroundColor: item.colorCode}}></span></label>
-                  </div>
-                ))}
-              </div>
-
-                
                 <button
-                  className="text-black bg-white p-3 rounded-lg m-4 pointer-events-auto w-12 h-12 flex justify-center items-center"
+                  className="text-black bg-white bg-opacity-80 p-3 rounded-lg m-4 pointer-events-auto w-12 h-12 flex justify-center items-center"
                   onClick={closeSession}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-8 w-8"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                 </button>
+                <div className="m-4 bg-white p-2 rounded-lg bg-opacity-80">
+                  {props.lamp.colors.length > 1 && props.lamp.colors.map((item:any, index:number) => (
+                    <div>
+                      <input className="peer hidden pointer-events-none" type="radio" name="color" radioGroup={item.name} id={item.name} value={item.name} checked={props.color === item.name} onChange={() => {}}/>
+                      <label onClick={() => {changeColor(item)}} className=" cursor-pointer dark:border-transparent border-white inline-block w-8 h-8 pointer-events-auto rounded-full peer-checked:ring-2 ring-orange-500 peer-checked:border-4 border-transparent" htmlFor={item.name}><span className="block rounded-full w-full h-full" style={{backgroundColor: item.colorCode}}></span></label>
+                    </div>
+                  ))}
+                </div>
               </div>
               
               
@@ -230,7 +212,7 @@ const ARButton = (props: any) => {
                 <div className="">
                   <div className="flex justify-between m-4">
                     <div className="flex space-x-2">
-                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={rotateLeft}>
+                      <button className="bg-white bg-opacity-80 pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={rotateLeft}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="17.358" height="17.768" viewBox="0 0 17.358 17.768">
                           <g id="Icon_feather-corner-down-right" data-name="Icon feather-corner-down-right" transform="translate(1 1)">
                             <path id="Path_57" data-name="Path 57" d="M26.584,15,22.5,19.8l4.084,4.8" transform="translate(-22.5 -9.241)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -238,7 +220,7 @@ const ARButton = (props: any) => {
                           </g>
                         </svg>
                       </button>
-                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12"  onClick={rotateRight}>
+                      <button className="bg-white bg-opacity-80 pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12"  onClick={rotateRight}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="17.358" height="17.772" viewBox="0 0 17.358 17.772">
                           <g id="Icon_feather-corner-down-right" data-name="Icon feather-corner-down-right" transform="translate(1 1)">
                             <path id="Path_57" data-name="Path 57" d="M22.5,15l4.8,4.8-4.8,4.8" transform="translate(-11.941 -9.241)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -248,7 +230,7 @@ const ARButton = (props: any) => {
                       </button>
                     </div>
                     {!darkmodeOn ? (
-                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={() => handleDarkMode(currentColor)}>
+                      <button className="bg-white bg-opacity-80 pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={() => handleDarkMode(props.color)}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
                           <g id="Group_31" data-name="Group 31" transform="translate(-3679 -1122)">
                             <rect id="Rectangle_67" data-name="Rectangle 67" width="30" height="30" transform="translate(3679 1122)" fill="rgba(255,255,255,0)"/>
@@ -258,7 +240,7 @@ const ARButton = (props: any) => {
 
                       </button>
                     ) : (
-                      <button className="bg-white pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={() => handleDarkMode(currentColor)}>
+                      <button className="bg-white bg-opacity-80 pointer-events-auto flex justify-center items-center rounded-lg p-3 w-12 h-12" onClick={() => handleDarkMode(props.color)}>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
                         <g id="Group_32" data-name="Group 32" transform="translate(-3679 -1157)">
                           <rect id="Rectangle_66" data-name="Rectangle 66" width="30" height="30" transform="translate(3679 1157)" fill="rgba(255,255,255,0)"/>
@@ -271,10 +253,10 @@ const ARButton = (props: any) => {
 
                   </div>
                   <div className="flex space-between m-4 space-x-4 font-semibold">
-                    <div className="bg-white pointer-events-auto rounded-lg p-3 text-center w-full" onClick={updateMovement}>
+                    <div className="bg-white pointer-events-auto rounded-lg p-3 text-center w-full bg-opacity-80" onClick={updateMovement}>
                       Move lamp
                     </div>
-                    <div className="bg-white pointer-events-auto rounded-lg p-3 text-center w-full" onClick={onSelect}>
+                    <div className="bg-white pointer-events-auto rounded-lg p-3 text-center w-full bg-opacity-80" onClick={onSelect}>
                       Place lamp
                     </div>
                   </div>
@@ -282,13 +264,16 @@ const ARButton = (props: any) => {
               </div>
               
             </div>
-          </div>
+
+          )}
+        </div>
+ 
         </div>
       ) : (
         <button
-          className="flex bg-transparent border-orange-500 space-x-2 border-2 rounded-lg px-4 py-2 md:mr-0 mr-4 text-orange-500 font-semibold"
+          className="flex space-x-2 bg-transparent border-orange-500 border-2 items-center justify-center rounded-lg md:w-40 md:h-12 w-full h-full md:mr-0 mr-4 text-orange-500 font-semibold"
           onClick={viewQR}
-        >
+          >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
           </svg>

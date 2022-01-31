@@ -8,31 +8,50 @@
                 {
                     "name": "GREEN",
                     "colorCode": "#93C572",
-                    "modelLink": "/models/lamp/LAMP_Pompidou_GREEN.glb",
-                    "darkModelLink": "/models/lamp/LAMP_Pompidou_GREEN_E.glb"
+                    "modelLink": "/models/Pompidou/GREEN_OFF.glb",
+                    "darkModelLink": "/models/Pompidou/GREEN_ON.glb",
+                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
+                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
                 },
                 {
                     "name": "RED",
                     "colorCode": "#FF0000",
-                    "modelLink": "/models/lamp/LAMP_Pompidou_RED.glb",
-                    "darkModelLink": "/models/lamp/LAMP1_RED_LIGHTTESTS_NOTRANSMISSION3.glb"
+                    "modelLink": "/models/Pompidou/RED_OFF.glb",
+                    "darkModelLink": "/models/Pompidou/RED_ON.glb",
+                    "image": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg",
+                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
                 },
                 {
                     "name": "BLUE",
                     "colorCode": "#0055FF",
-                    "modelLink": "/models/lamp/LAMP_Pompidou_RED.glb",
-                    "darkModelLink": "/models/lamp/LAMP_Pompidou_RED_E.glb"
+                    "modelLink": "/models/Pompidou/BLUE_OFF.glb",
+                    "darkModelLink": "/models/Pompidou/BLUE_ON.glb",
+                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
+                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
+                },
+                {
+                    "name": "WHITE",
+                    "colorCode": "#EBEBEB",
+                    "modelLink": "/models/Pompidou/WHITE_OFF.glb",
+                    "darkModelLink": "/models/Pompidou/WHITE_ON.glb",
+                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
+                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
+                },
+                {
+                    "name": "YELLOW",
+                    "colorCode": "#FAE315",
+                    "modelLink": "/models/Pompidou/YELLOW_OFF.glb",
+                    "darkModelLink": "/models/Pompidou/YELLOW_ON.glb",
+                    "image": "/models/Pompidou/LAMP_Pompidou_image.jpeg",
+                    "imageDark": "/models/Pompidou/LAMP_Pompidou_image_dark.jpeg"
                 }
             ],
             "rating": 4.5,
-            "image": "/models/lamp/LAMP_Pompidou_image.jpeg",
-            "imageDark": "/models/lamp/LAMP_Pompidou_image_dark.jpeg",
             "description": "The Pompidou lamp is a table lamp for indoors. The upper part is 3D printed and swappable with other compatible lamps. The bottom part has a wooden texture. Lamp available in different colors.",
             "price": 12,
             "material": "PLA",
             "watt": "10 watt",
-            "cord": "36 kwh",
-            "numberOfColors": 5
+            "cord": "36 kwh"
         },
         {
             "id": "10360572-b8ef-4b51-b7a8-1edd3567e273",
@@ -43,12 +62,12 @@
                     "name": "GREEN",
                     "colorCode": "#93C572",
                     "modelLink": "/models/lamp/LAMP_t6.glb",
-                    "darkModelLink": "/models/lamp/LAMP_t6_E.glb"
+                    "darkModelLink": "/models/lamp/LAMP_t6_E.glb",
+                    "image": "/models/lamp/LAMP_Pompidou_image.jpeg",
+                    "imageDark": "/models/lamp/LAMP_Pompidou_image_dark.jpeg"
                 }
             ],
             "rating": 4.5,
-            "image": "/models/lamp/LAMP_Pompidou_image.jpeg",
-            "imageDark": "/models/lamp/LAMP_Pompidou_image_dark.jpeg",
             "description": "The Pompidou lamp is a table lamp for indoors. The upper part is 3D printed and swappable with other compatible lamps. The bottom part has a wooden texture. Lamp available in different colors.",
             "price": 12,
             "material": "PLA",
@@ -64,12 +83,12 @@
                     "name": "GREEN",
                     "colorCode": "#93C572",
                     "modelLink": "/models/Eiffel/LAMP_Eiffel_GREEN.glb",
-                    "darkModelLink": "/models/Eiffel/LAMP_Eiffel_GREEN_ON.glb"
+                    "darkModelLink": "/models/Eiffel/LAMP_Eiffel_GREEN_ON.glb",
+                    "image": "/models/lamp/LAMP_Pompidou_image.jpeg",
+                    "imageDark": "/models/lamp/LAMP_Pompidou_image_dark.jpeg"
                 }
             ],
             "rating": 4,
-            "image": "/models/lamp/LAMP_Pompidou_image.jpeg",
-            "imageDark": "/models/lamp/LAMP_Pompidou_image_dark.jpeg",
             "description": "The Pompidou lamp is a table lamp for indoors. The upper part is 3D printed and swappable with other compatible lamps. The bottom part has a wooden texture. Lamp available in different colors.",
             "price": 12,
             "material": "PLA",

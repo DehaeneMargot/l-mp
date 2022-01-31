@@ -14,7 +14,7 @@ export const useAR = (() => {
   let hitTestSourceRequested = false;
   let rotationValue = 0;
   let modelPlaced: boolean = false;
-  let currentModel: Object3D;
+  let currentModel: any;
   let reticleEnabled: boolean = false;
   let defaultEnvironment: any;
   let plane: any;
@@ -29,22 +29,22 @@ export const useAR = (() => {
   // let bulbMat: any;
   let spotLight, lightHelper, shadowCameraHelper;
 
-  const isARSupported = (): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      if ("xr" in navigator) {
-        let supported = (navigator as any).xr
-          .isSessionSupported("immersive-ar")
-          .then((supported: any) => {
-            console.log(supported);
+  // const isARSupported = (): Promise<boolean> => {
+  //   return new Promise((resolve, reject) => {
+  //     if ("xr" in navigator) {
+  //       let supported = (navigator as any).xr
+  //         .isSessionSupported("immersive-ar")
+  //         .then((supported: any) => {
+  //           console.log(supported);
 
-            arSupported = supported;
-            return supported;
-          });
-        resolve(supported);
-      }
-      reject(false);
-    });
-  };
+  //           arSupported = supported;
+  //           return supported;
+  //         });
+  //       resolve(supported);
+  //     }
+  //     reject(false);
+  //   });
+  // };
 
   const initLights = (scene: THREE.Scene) => {
     // TEST 1
@@ -89,11 +89,18 @@ export const useAR = (() => {
 
   const clearChildren = async () => {
     if (scene) {
+      console.log(scene.children)
+      currentModel = undefined;
       scene.children.forEach((child: any) => {
+        console.log(child)
         if (child.name !== 'reticle') {
 					scene!.remove(child)
 				}
       });
+
+      scene.getObjectByName("model")?.removeFromParent();
+
+      console.log(scene.children)
 
       initLights(scene);
     }
@@ -164,33 +171,35 @@ export const useAR = (() => {
   // Rotate object to left
   const rotateLeft = () => {
     
-    // if(currentModel){
-    //   currentModel.rotateY(-10);
-    // }
+    if(currentModel){
+      currentModel.rotateY(-10);
+    }
   }
 
   // Change the model
   const changeModel = (model: THREE.Object3D, darkModeState: boolean) => {
     darkMode = darkModeState;
-    let lastLocation:Vector3 = currentModel.position;
+
+    if (darkModeState === true) {
+      scene?.getObjectByName("mainLight")?.removeFromParent();
+    } else {
+      scene?.add(light);
+    }
+    
     let x = scene?.getObjectByName("model");
     x?.removeFromParent();
+    x?.remove();
 
     model.traverse( function( node ) {
       node.castShadow = true;
     });
-
-    model.traverse((node) => {
-      if (node instanceof THREE.Mesh) {
-        if (node.name === "BULB") {
-          node.castShadow = false;
-        }
-      } 
-    });
     
-    scene?.add(model);
-    model.position.setFromMatrixPosition(currentModel.matrixWorld)
-    model.quaternion.setFromRotationMatrix(currentModel.matrixWorld);
+    if (reticle.visible) {
+      scene?.add(model);
+      model.position.setFromMatrixPosition(currentModel.matrixWorld)
+      model.quaternion.setFromRotationMatrix(currentModel.matrixWorld);
+    }
+
     model.name = "model";
     currentModel = model;
   }
@@ -277,13 +286,13 @@ export const useAR = (() => {
     addPlaneToSceneThatReceivesShadows(model.position);
 
 
-    const testLight = () => {
-      const geometry = new THREE.ConeGeometry( 5, 2, 3 );
-      const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-      testCone = new THREE.Mesh( geometry, material );
+    // const testLight = () => {
+    //   const geometry = new THREE.ConeGeometry( 5, 2, 3 );
+    //   const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+    //   testCone = new THREE.Mesh( geometry, material );
 
-      sc.add(testCone);
-    }
+    //   sc.add(testCone);
+    // }
 
     //testLight();
 
@@ -324,6 +333,7 @@ export const useAR = (() => {
     // Model
     model.name = "model";
     model.rotateY(rotationValue);
+    modelPlaced = false;
     currentModel = model;
 
 
@@ -357,8 +367,8 @@ export const useAR = (() => {
     sc.add( light );
 
     //Set up shadow properties for the light
-    light.shadow.mapSize.width = 2048;
-    light.shadow.mapSize.height = 2048;
+    light.shadow.mapSize.width = 1024;
+    light.shadow.mapSize.height = 1024;
     light.shadow.camera.near = 0.5;
     light.shadow.camera.far = 1000;
     light.shadow.focus = 1; // default
@@ -432,10 +442,15 @@ export const useAR = (() => {
             reticle.matrix.fromArray(
               hit.getPose(referenceSpace!)!.transform.matrix
             );
+            
+            setTimeout(function () {
+              if ( !darkMode) {
+                plane.visible = true;
+                plane.matrix.fromArray(hit.getPose(referenceSpace!)!.transform.matrix);
+                planeCreated = true;
+              }
+            }, 500);
 
-            plane.visible = true;
-            plane.matrix.fromArray(hit.getPose(referenceSpace!)!.transform.matrix);
-            planeCreated = true;
           } else {
             reticle.visible = false;
           }
@@ -446,12 +461,10 @@ export const useAR = (() => {
       //console.log(light.position)
       if (darkMode) {
         dark.visible = true;
-        //secondDark.visible = true;
         dark.position.set(camera.position.x, camera.position.y, camera.position.z);
         dark.rotation.set(camera.rotation.x, camera.rotation.y, camera.rotation.z);
       } else {
         dark.visible = false;
-        //secondDark.visible = false;
       }
 
 
@@ -476,11 +489,8 @@ export const useAR = (() => {
     return new Promise(async (resolve, reject) => {
       try {
         clearChildren();
-        let supported = await isARSupported();
-        if (supported) {
-          const renderer = initScene(model);
-          resolve(renderer);
-        }
+        const renderer = initScene(model);
+        resolve(renderer);
       } catch (e) {
         console.log(e);
 
@@ -499,7 +509,6 @@ export const useAR = (() => {
 
   return {
     getARContainer,
-    isARSupported,
     createSessionIfSupported,
     getRenderer,
     clearChildren,
@@ -508,6 +517,7 @@ export const useAR = (() => {
     rotateRight,
     rotateLeft,
     changeModel,
-    onSelect
+    onSelect,
+    initScene
   };
 })();

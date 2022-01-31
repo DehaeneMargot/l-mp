@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { setGlobalState, useGlobalState } from "../utils/globalState";
 import { useAR } from "../utils/useAR";
 
 const SecondaryHeader = (props: any) => {
@@ -8,6 +9,10 @@ const SecondaryHeader = (props: any) => {
     const [productOptionsOpen, setProductOptionsOpen] = useState(false);
     const [specificationsOpen, setSpecificationsOpen] = useState(false);
     const [darkModeEnabled, setDarkModeEnabled] = useState<boolean>();
+    const [activePage, setActivePage] = useGlobalState("activePage");
+    const [backButton, setBackButton] = useState<boolean>();
+    const [isAtTop, setIsAtTop] = useState(true);
+    const navigate = useNavigate();
 
     const handleMenuOpender = () => {
         if (isMenuOpen) {
@@ -34,32 +39,53 @@ const SecondaryHeader = (props: any) => {
         }
     }
 
+    const handleScroll = () => {
+        if (window.scrollY == 0) {
+            if (!isAtTop) setIsAtTop(true);
+            console.log(isAtTop)
+        } else {
+            if (isAtTop) setIsAtTop(false);
+            console.log(isAtTop)
+        }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+
     useEffect(() => {
+        if (activePage == "productdetail") {
+            console.log("test")
+            setBackButton(true);
+        } else {
+            setBackButton(false);
+        }
         let main = document.getElementById("main");
         let toggle = document.getElementById("toggle") as HTMLInputElement;
 
-        if (localStorage.theme === 'light') {
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            localStorage.setItem('theme', 'light');
             toggle!.checked = false;
             main?.classList.remove('dark');
             setDarkModeEnabled(false);
-        } else if(localStorage.theme === 'dark' ) {
+        } else if(localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            localStorage.setItem('theme', 'dark');
             toggle!.checked = true;
             main?.classList.add('dark');
             toggle?.classList.add('checked');
             setDarkModeEnabled(true);
         }
-    }, [])
+    }, [activePage])
 
     const handleDarkModeToggle = () => {
         let main = document.getElementById("main");
 
         if (localStorage.theme === 'light') {
             main?.classList.add('dark');
-            localStorage.theme = 'dark';
+            localStorage.setItem('theme', 'dark');
             setDarkModeEnabled(true);
+
         } else if(localStorage.theme === 'dark' ) {
             main?.classList.remove('dark');
-            localStorage.theme = 'light';
+            localStorage.setItem('theme', 'light');
             setDarkModeEnabled(false);
         }
     }
@@ -70,7 +96,7 @@ const SecondaryHeader = (props: any) => {
         <div id="main">
             <>
                 {isMenuOpen && (
-                <div className="fixed z-20 left-0 bg-white w-7/12 p-8 h-full sm:hidden transition-all">
+                <div className="fixed z-40 left-0 bg-white w-7/12 p-8 h-full sm:hidden transition-all">
                     <div className="flex justify-between mb-4">
                         <h1 className="font-bold dark:text-white">LÄMP</h1>
                         <svg onClick={handleMenuOpender} xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -78,9 +104,9 @@ const SecondaryHeader = (props: any) => {
                         </svg>
                     </div>
                     <ul className="font-semibold">
-                        <li> <Link to="/">Home</Link> </li>
+                        <li> <Link to="/home">Home</Link> </li>
                         <li><p>Lamps</p>
-                            <div className="py-1 flex" role="none">
+                            <div className="py-1 flex flex-col" role="none">
                                 <Link replace to="/lamps?type=all_lamps" className="text-black px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" id="menu-item-2" onClick={handleMenuOpender}>All lamps</Link>
                                 <Link replace to="/lamps?type=table_lamps" className="text-black px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" id="menu-item-0" onClick={handleMenuOpender}>Table lamps</Link>
                                 <Link replace to="/lamps?type=ceiling_lamps" className="text-black px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" id="menu-item-1" onClick={handleMenuOpender}>Ceiling lamps</Link>
@@ -93,15 +119,26 @@ const SecondaryHeader = (props: any) => {
                 </div>
                 )}
             </>
-            <header className="dark:bg-zinc-900 md:px-8 px-4 py-4 justify-between flex items-center bg-white fixed top-0 w-full z-10 ">
-                <svg onClick={handleMenuOpender} xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:hidden block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+            
+            <header className={`${
+                (isAtTop) ? "bg-transparent" : "bg-white dark:bg-zinc-900"
+                }  md:px-8 px-4 py-4 justify-between flex items-center fixed top-0 w-full z-30`}>
                 <div>
-                    <h1 className="font-bold hidden sm:block dark:text-white">LÄMP</h1>
+                    {backButton ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 cursor-pointer dark:stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" onClick={() => navigate(-1)}>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                        </svg>
+                    ): (
+                        <div>
+                            <svg onClick={handleMenuOpender} xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:hidden block dark:stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <h1 className="font-bold hidden sm:block dark:text-white">LÄMP</h1>
+                        </div>
+                    )}
                 </div>
                 <ul className=" space-x-4 font-semibold sm:flex hidden">
-                    <li> <Link className="dark:text-white" to="/">Home</Link> </li>
+                    <li> <Link className="dark:text-white" to="/home">Home</Link> </li>
                     <li onClick={handleOptionsOpen} onMouseLeave={() => {setProductOptionsOpen(false)}} className="relative">
                         <button className="flex justify-center items-center ">
                             <h1 className="font-semibold dark:text-white">Lamps</h1>
