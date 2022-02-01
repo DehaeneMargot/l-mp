@@ -50,7 +50,6 @@ export const useAR = (() => {
     hemispehereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     hemispehereLight.position.set(0.5, 0, 0.25);
     scene.add(hemispehereLight);
-    console.log('hey')
 
     //TEST 2
     // const color = 0xFFFFFF;
