@@ -7,7 +7,7 @@ function Router() {
   return (
     <div>
       <Routes>
-        <Route path="home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="lamps" element={<Products />} />
         <Route path="lamps/detail" element={<ProductDetail />} />
       </Routes>
