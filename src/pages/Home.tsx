@@ -3,6 +3,7 @@ import Footer from "../components/Footer"
 import { setGlobalState } from "../utils/globalState"
 import { Player } from '@lottiefiles/react-lottie-player';
 import Header from "../components/Header";
+import { Link } from "react-router-dom";
 
 const Home = () => {
 
@@ -21,7 +22,7 @@ const Home = () => {
                         <div className="p-4 lg:p-0 absolute lg:relative bottom-6 my-auto z-20">
                             <h1 className="md:text-5xl lg:text-7xl text-left text-4xl  dark:text-white text-black font-semibold"><span className="font-bold text-orange-500">Homemade lamps</span> that brighten up your day</h1>
                             <p className="mt-10 text-xl dark:text-white text-black">Modern high quality 3D printed lamps that come to life on your mobile phone with Augmented Reality.</p>
-                            <button className="bg-orange-500 hover:bg-orange-400 text-white px-6 py-3 rounded-md mt-16 font-semibold" >Discover lamps</button>
+                            <Link replace to="/lamps?type=all_lamps" className="bg-orange-500 hover:bg-orange-400 text-white px-6 py-3 rounded-md mt-16 font-semibold" >Discover lamps</Link>
                         </div>
                         <div><svg className="absolute -top-10 lg:-top-64 lg:right-28 ml-auto mr-auto left-0 lg:left-auto right-0 lg:w-lamp w-72 md:w-96" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 675.971 1190.601">
                             <defs>

@@ -28,23 +28,6 @@ export const useAR = (() => {
   // let bulbLight: any;
   // let bulbMat: any;
 
-  // const isARSupported = (): Promise<boolean> => {
-  //   return new Promise((resolve, reject) => {
-  //     if ("xr" in navigator) {
-  //       let supported = (navigator as any).xr
-  //         .isSessionSupported("immersive-ar")
-  //         .then((supported: any) => {
-  //           console.log(supported);
-
-  //           arSupported = supported;
-  //           return supported;
-  //         });
-  //       resolve(supported);
-  //     }
-  //     reject(false);
-  //   });
-  // };
-
   const initLights = (scene: THREE.Scene) => {
     // TEST 1
     hemispehereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
@@ -88,18 +71,14 @@ export const useAR = (() => {
 
   const clearChildren = async () => {
     if (scene) {
-      console.log(scene.children)
       currentModel = undefined;
       scene.children.forEach((child: any) => {
-        console.log(child)
         if (child.name !== 'reticle') {
 					scene!.remove(child)
 				}
       });
 
       scene.getObjectByName("model")?.removeFromParent();
-
-      console.log(scene.children)
 
       initLights(scene);
     }
@@ -111,7 +90,6 @@ export const useAR = (() => {
       scene?.getObjectByName("reticle")?.removeFromParent();
 
     } else {
-      console.log("help")
       let x = scene?.getObjectByName("model");
       x!.visible = false;
       scene?.add(reticle);
@@ -143,7 +121,6 @@ export const useAR = (() => {
             scene?.getObjectByName("plane")?.removeFromParent();
             addPlaneToSceneThatReceivesShadows(reticle.position);
             scene!.add(currentModel);
-            console.log("placed");
             scene?.getObjectByName("reticle")?.removeFromParent();
           }
         } else {
@@ -320,9 +297,7 @@ export const useAR = (() => {
       // The estimated lighting also provides an environment cubemap, which we can apply here.
       
       if ( xrLight.environment ) {
-        console.log(xrLight);
         updateEnvironment( xrLight.environment );
-        console.log(xrLight.environment)
       }
 
     } );
@@ -498,8 +473,6 @@ export const useAR = (() => {
         const renderer = initScene(model);
         resolve(renderer);
       } catch (e) {
-        console.log(e);
-
         reject();
       }
     });
