@@ -48,7 +48,7 @@
             ],
             "rating": 4.5,
             "description": "The Pompidou lamp is a table lamp for indoors. The upper part is 3D printed and swappable with other compatible lamps. The bottom part has a wooden texture. Lamp available in different colors.",
-            "price": 12,
+            "price": 55,
             "material": "PLA",
             "watt": "10 watt",
             "cord": "36 kwh"
@@ -100,11 +100,11 @@
                 }
             ],
             "rating": 4.5,
-            "description": "The Pompidou lamp is a table lamp for indoors. The upper part is 3D printed and swappable with other compatible lamps. The bottom part has a wooden texture. Lamp available in different colors.",
-            "price": 12,
+            "description": "The Bastille lamp is a standing lamp for indoors. The lampshade is 3D printed and made out of PLA printing material. The lamp has a wooden base. Lamp available in different colors.",
+            "price": 112,
             "material": "PLA",
-            "size": "",
-            "watt": ""
+            "watt": "10 watt",
+            "cord": "36 kwh"
         },
         {
             "id": "30f11730-d99b-4bcf-89e4-6ad00d80e065",
@@ -153,11 +153,11 @@
                 }
             ],
             "rating": 4,
-            "description": "The Pompidou lamp is a table lamp for indoors. The upper part is 3D printed and swappable with other compatible lamps. The bottom part has a wooden texture. Lamp available in different colors.",
-            "price": 12,
+            "description": "The Eiffel lamp is a table lamp for indoors. The upper part is 3D printed and swappable with other compatible lamps. The bottom part has a wooden texture. Lamp available in different colors.",
+            "price": 47,
             "material": "PLA",
-            "size": "",
-            "watt": ""
+            "watt": "10 watt",
+            "cord": "36 kwh"
         }
     ]   
 }

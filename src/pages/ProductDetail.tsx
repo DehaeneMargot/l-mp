@@ -158,7 +158,7 @@ const ProductDetail = (props:any) => {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center space-x-2 pl-2">
                                     {currentLamp.colors.map((color: any) => (
                                         <div>
                                             <input type="radio" radioGroup={color.name} defaultChecked={color.name === currentColor} name="colors" id={color.name} className=" pointer-events-auto peer hidden h-6 w-6 rounded-full" style={{backgroundColor: color.colorCode}} onChange={() => {handleColorOptions(color)}}/>
