@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom";
 import ARButton from "../components/ARButton"
-import SecondaryHeader from "../components/SecondaryHeader"
 import lamps from '../data/lamps.json';
 import Rating from '@mui/material/Rating';
 import { setGlobalState } from "../utils/globalState";
+import Header from "../components/Header";
 
 const ProductDetail = (props:any) => {
 
@@ -69,7 +69,7 @@ const ProductDetail = (props:any) => {
                 </div>
             ) : (
                 <div>
-                    <SecondaryHeader/>
+                    <Header/>
                     <div className="h-screen dark:bg-zinc-900 bg-white">
                         <div className="dark:bg-zinc-900 bg-white ">
                             <div className="  grid md:grid-cols-2 gap-6 px-4 mb-4 max-w-8xl w-full mx-auto pt-20 md:pt-24">
@@ -184,7 +184,7 @@ const ProductDetail = (props:any) => {
                                     <div className=" sticky md:block bottom-0 right-0 left-0 md:relative w-full md:bg-transparent md:dark:bg-transparent dark:bg-zinc-900 bg-white">
                                         <div className=" w-full py-4 md:space-x-2 spaxe-x-1 md:flex items-center justify-center md:justify-between pt-4">
                                             <p className="text-4xl font-semibold hidden md:block dark:text-white">€ {currentLamp.price }</p>
-                                            <div className="md:flex md:space-x-4 grid grid-cols-2 gap-4">   
+                                            <div className="md:flex grid grid-cols-2 gap-4">   
                                                 <ARButton lamp={currentLamp} color={currentColor}/>
                                                 <button className="bg-orange-500 rounded-lg border-orange-500 border-2 px-4 py-2 text-white font-semibold hover:bg-orange-400 hover:border-orange-400">
                                                     Add to Cart
@@ -192,12 +192,8 @@ const ProductDetail = (props:any) => {
                                             </div>
                                         </div>     
                                     </div>
-                                    </div>
-
-                                    </div>
-
-
-
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

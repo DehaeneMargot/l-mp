@@ -1,9 +1,10 @@
-import SecondaryHeader from "../components/SecondaryHeader";
+import Header from "../components/Header";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import lamps from '../data/lamps.json';
 import { setGlobalState } from "../utils/globalState";
 import Footer from "../components/Footer";
+import Loading from "../components/Loading";
 
 const Products = () => {
 
@@ -14,6 +15,7 @@ const Products = () => {
     const location = useLocation();
     const [allFilteredLamps, setAllFilteredLamps] = useState<Array<any>>([]);
     const [allLamps, setAllLamps] = useState<Array<any>>([]);
+    const [search, setSearch] = useState<string>('');
 
     let filteredLamps:Array<any> = [];
 
@@ -22,17 +24,28 @@ const Products = () => {
 	}, [])
 
     useEffect(() => {
-        async function start() {
-            const urlParams = new URLSearchParams(location.search)
-            let currentCategory = urlParams.get("type")!
-            setCategory(currentCategory);
-            getProducts(currentCategory);
-            let cased = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
-            let fullname = cased.split("_").join(" ");
-            setCategoryDisplayed(fullname);
-            setLoading(false);
+        let allProducts = lamps.lamps;
+        if (category === "all_lamps") {
+            let filter = allProducts.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+            setAllLamps(filter);
+        } else {
+            let filter = allProducts.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()) && p.category === category);
+            setAllFilteredLamps(filter);
         }
-        start()
+    }, [search])
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search)
+        let currentCategory = urlParams.get("type")!
+        
+        setCategory(currentCategory);
+        getProducts(currentCategory);
+
+        let cased = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
+        let fullname = cased.split("_").join(" ");
+        setCategoryDisplayed(fullname);
+        setLoading(false);
+
 	}, [location])
     
     const getProducts = (currentCategory: string) => {
@@ -52,14 +65,14 @@ const Products = () => {
         <div id="main" className="">
             {loading ? (
                 <div>
-                    Loading
+                    <Loading/>
                 </div>
             ) : (
                 <>
-                    <SecondaryHeader/>
-                    <div className="md:h-screen bg-white dark:bg-zinc-900">
-                        <div className="max-w-8xl w-full mx-auto p-4">
-                            <div className="pt-20">
+                    <Header/>
+                    <div className=" bg-white dark:bg-zinc-900">
+                        <div className="max-w-8xl w-full mx-auto p-4 min-h-screen">
+                            <div className="md:pt-20 pt-16">
                                 
                                     {category === "all_lamps" ? (
                                         <>
@@ -67,38 +80,41 @@ const Products = () => {
                                             <h1 className="text-2xl md:text-3xl font-semibold dark:text-white">Lamps</h1>
                                         </div>
 
-                                        <form className="flex items-center space-x-4 mb-8">
+                                        <div className="flex items-center space-x-4 mb-8">
 
-                                            <input type="text" placeholder={"Search for Lämps..."} className="relative bg-neutral-100 dark:bg-zinc-800 w-full h-full pl-12  rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
+                                            <input type="text" onChange={(e) => {setSearch(e.target.value)}} placeholder={"Search for Lämps..."} className="relative dark:text-white bg-neutral-100 dark:bg-zinc-800 w-full h-full pl-12  rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
                                             <svg xmlns="http://www.w3.org/2000/svg" className="absolute h-6 w-6 dark:stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
-                                        </form>
-
-                                        <div className="overflow-x-auto flex md:grid md:grid-cols-5 md:gap-8 mb-4 snap-x scrollbar">
-                                            <Link replace to="/lamps?type=table_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
-                                                <p className="font-semibold text-lg dark:text-white">Table lamps</p>
-                                                <img draggable="false" className="select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/tablelamp.svg" alt="" />
-                                            </Link>
-                                            <Link replace to="/lamps?type=desk_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
-                                                <p className="font-semibold text-lg dark:text-white">Desk lamps</p>
-                                                <img draggable="false" className="select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/desklamp.svg" alt="" />
-                                            </Link>
-                                            <Link replace to="/lamps?type=standing_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
-                                                <p className="font-semibold text-lg dark:text-white">Standing lamps</p>
-                                                <img draggable="false" className="select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/standinglamp.svg" alt="" />
-                                            </Link>
-                                            <Link replace to="/lamps?type=ceiling_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
-                                                <p className="font-semibold text-lg dark:text-white">Ceiling lamps</p>
-                                                <img draggable="false" className="select-none h-20 w-20 absolute right-4 top-0" src="/images/categories/ceilinglamp.svg" alt="" />
-                                            </Link>
-                                            <Link replace to="/lamps?type=wall_lamps" className="snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden h-24">
-                                                <p className="font-semibold text-lg dark:text-white">Wall lamps</p>
-                                                <img draggable="false" className="select-none h-20 w-20 absolute right-4 top-0 " src="/images/categories/walllamp.svg" alt="" />
-                                            </Link>
                                         </div>
 
-                                        <h2 className="text-lg md:text-xl font-semibold pb-2 pt-6 dark:text-white">All lamps</h2>
+                                        <div className="relative">
+                                            <div className="overflow-x-auto flex md:grid md:grid-cols-5 md:gap-8 mb-4 snap-x scroll space-x-4 scrollbar-hide">
+                                            <Link replace to="/lamps?type=table_lamps" className="min-w-min snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden md:h-24">
+                                                <p className="font-semibold md:text-lg dark:text-white whitespace-nowrap">Table lamps</p>
+                                                <img draggable="false" className="hidden md:block select-none h-20 w-20 md:absolute right-4 bottom-0" src="/images/categories/tablelamp.svg" alt="" />
+                                            </Link>
+                                            <Link replace to="/lamps?type=desk_lamps" className="min-w-min snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden md:h-24">
+                                                <p className="font-semibold md:text-lg dark:text-white whitespace-nowrap">Desk lamps</p>
+                                                <img draggable="false" className="hidden md:block select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/desklamp.svg" alt="" />
+                                            </Link>
+                                            <Link replace to="/lamps?type=standing_lamps" className="min-w-min snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden md:h-24">
+                                                <p className="font-semibold md:text-lg dark:text-white whitespace-nowrap">Standing lamps</p>
+                                                <img draggable="false" className="hidden md:block select-none h-20 w-20 absolute right-4 bottom-0" src="/images/categories/standinglamp.svg" alt="" />
+                                            </Link>
+                                            <Link replace to="/lamps?type=ceiling_lamps" className="min-w-min snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden md:h-24">
+                                                <p className="font-semibold md:text-lg dark:text-white whitespace-nowrap">Ceiling lamps</p>
+                                                <img draggable="false" className="hidden md:block select-none h-20 w-20 absolute right-4 top-0" src="/images/categories/ceilinglamp.svg" alt="" />
+                                            </Link>
+                                            <Link replace to="/lamps?type=wall_lamps" className="min-w-min snap-start dark:bg-zinc-800 bg-neutral-100 dark:hover:bg-zinc-700 hover:bg-neutral-200 p-4 rounded-md relative overflow-hidden md:h-24">
+                                                <p className="font-semibold md:text-lg dark:text-white whitespace-nowrap">Wall lamps</p>
+                                                <img draggable="false" className="hidden md:block select-none h-20 w-20 absolute right-4 top-0 " src="/images/categories/walllamp.svg" alt="" />
+                                            </Link>
+                                        </div>
+                                        </div>
+                                        
+
+                                        <h2 className="text-lg md:text-xl font-semibold pb-2 md:pt-6 dark:text-white">All lamps</h2>
                                         
                                         <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 md:gap-8 gap-4" >
                                             {allLamps.map((item: any) => (
@@ -148,7 +164,7 @@ const Products = () => {
                                         </div>
 
                                         <form className="flex items-center space-x-4 mb-8">
-                                            <input type="text" placeholder={"Search for Lämps..."} className="relative bg-neutral-100 dark:bg-zinc-800 w-full h-full pl-12  rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
+                                            <input type="text" onChange={(e) => {setSearch(e.target.value)}} placeholder={"Search for Lämps..."} className="dark:text-white relative bg-neutral-100 dark:bg-zinc-800 w-full h-full pl-12  rounded-md p-3 border dark:border-zinc-800 dark:hover:border-orange-500 border-neutral-100 focus:outline-none hover:border hover:border-orange-500 focus:ring focus:ring-orange-500 focus:ring-opacity-40"/>
                                             <svg xmlns="http://www.w3.org/2000/svg" className="absolute h-6 w-6 dark:stroke-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
@@ -193,7 +209,7 @@ const Products = () => {
                             </div>
                         </div>
                     </div>
-                    <footer className="dark:bg-zinc-900 bg-neutral-100 h-auto">
+                    <footer className="dark:bg-zinc-1000 bg-neutral-100 h-auto">
                         <Footer />
                     </footer>
                 </>

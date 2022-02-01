@@ -93,7 +93,7 @@ const Footer = (props: any) => {
         </div>
       </div>
     </div>
-    <div className="bg-neutral-200 dark:bg-zinc-1000">
+    <div className="bg-neutral-200 dark:bg-black">
       <div className="max-w-8xl mx-auto p-4 relative h-auto" > 
         <h1 className="text-sm text-center font-semibold dark:text-white">
           Copyright © 2022 LÄMP. All Rights Reserved. Made with L♥VE.

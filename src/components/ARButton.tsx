@@ -158,7 +158,7 @@ const ARButton = (props: any) => {
             <button
               className={`${
                 arSupported ? "bg-red-500" : "hidden"
-              } flex space-x-2 bg-transparent border-orange-500 border-2 items-center justify-center rounded-lg w-full h-full md:mr-0 mr-4 text-orange-500 font-semibold`}
+              } flex space-x-2 bg-transparent border-orange-500 hover:bg-orange-500 border-2 hover:text-white items-center justify-center rounded-lg w-full h-full md:mr-0 mr-4 text-orange-500 font-semibold`}
               onClick={startSession}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -255,7 +255,7 @@ const ARButton = (props: any) => {
         </div>
       ) : (
         <button
-          className="flex space-x-2 bg-transparent border-orange-500 border-2 items-center justify-center rounded-lg md:w-40 md:h-12 w-full h-full md:mr-0 mr-4 text-orange-500 font-semibold"
+          className="flex space-x-2 bg-transparent border-orange-500 hover:bg-orange-500 border-2 hover:text-white items-center justify-center rounded-lg md:w-40 md:h-12 w-full h-full md:mr-0 mr-4 text-orange-500 font-semibold"
           onClick={viewQR}
           >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -275,14 +275,13 @@ const ARButton = (props: any) => {
           justify-center
           bg-semi-60
           z-90
-          bg-black bg-opacity-50 z-50">
-          <div className=" relative w-2/6 md:h-auto h-full bg-white shadow-lg md:rounded-lg rounded-none p-8 overflow-y-auto overflow-x-hidden grid grid-cols-2">
-            <QRCode value={window.location.href} className="w-full"/>
-            <div>
-              <h3 className="font-semibold text-3xl pb-2">Scan QR code</h3>
-              <p className="border-t-2 pt-4 text-lg">Scan this QR code with your phone to view this lamp in <span className="text-orange-500">Augmented Reality</span>.</p>
-            </div>
-            <div className="absolute right-4 top-4 cursor-pointer" onClick={() => {setQRVisible(false)}}>
+          bg-black bg-opacity-50 z-50
+          ">
+          <div className=" relative w-auto md:h-auto h-full bg-white shadow-lg md:rounded-lg rounded-none p-8 overflow-y-auto overflow-x-hidden flex justify-center items-center flex-col">
+            <h3 className="font-semibold text-3xl pb-2">Scan QR code</h3>
+            <p className="py-4 text-lg md:w-4/6 text-center">Scan this QR code with an AR supported phone to view this lamp in <span className="text-orange-500">Augmented Reality</span>.</p>
+            <QRCode value={window.location.href}/>
+            <div className="absolute right-8 md:top-4 top-16 cursor-pointer" onClick={() => {setQRVisible(false)}}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>

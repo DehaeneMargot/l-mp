@@ -8,7 +8,7 @@ input:checked ~ .dot {
 }
 
 input:checked ~ .bgcolor {
-    background-color: #000000;
+    background-color: #27272A;
 }
 
 .searchbar {

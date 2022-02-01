@@ -1,9 +1,8 @@
 import { useEffect } from "react"
 import Footer from "../components/Footer"
-import SecondaryHeader from "../components/SecondaryHeader"
 import { setGlobalState } from "../utils/globalState"
 import { Player } from '@lottiefiles/react-lottie-player';
-
+import Header from "../components/Header";
 
 const Home = () => {
 
@@ -13,18 +12,18 @@ const Home = () => {
 
     return (
         <div id="main">
-            <SecondaryHeader/>
-            <main className="">
-                <div className="bg-[#F2EEE8] dark:bg-zinc-900">
-                <div className="max-w-8xl w-full mx-auto">
-                <section className=" min-h-screen">
-                    <div className="grid grid-cols-2 pt-20">
-                        <div className="mt-44 p-4 md:p-0 absolute md:relative bottom-20 z-20">
-                            <h1 className=" lg:text-7xl :text-left text-4xl  dark:text-white text-black font-semibold"><span className="font-bold text-orange-500">Homemade lamps</span> that brighten up your day</h1>
-                            <p className="mt-10 text-xl dark:text-white text-black">Modern high quality and customizable or premade lamps.</p>
+            <Header/>
+            <main className="bg-[#F2EEE8] dark:bg-zinc-900">
+                <div className="">
+                <div className="max-w-8xl w-full mx-auto bg-[#F2EEE8] dark:bg-zinc-900" >
+                <section className="min-h-screen overflow-hidden">
+                    <div className=" grid lg:grid-cols-2 md:p-6 h-screen">
+                        <div className="p-4 lg:p-0 absolute lg:relative bottom-6 my-auto z-20">
+                            <h1 className="md:text-5xl lg:text-7xl text-left text-4xl  dark:text-white text-black font-semibold"><span className="font-bold text-orange-500">Homemade lamps</span> that brighten up your day</h1>
+                            <p className="mt-10 text-xl dark:text-white text-black">Modern high quality 3D printed lamps that come to life on your mobile phone with Augmented Reality.</p>
                             <button className="bg-orange-500 hover:bg-orange-400 text-white px-6 py-3 rounded-md mt-16 font-semibold" >Discover lamps</button>
                         </div>
-                        <div><svg className="absolute -top-10 lg:-top-64 lg:right-20 ml-auto mr-auto left-0 lg:left-auto right-0 lg:w-lamp w-72" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 675.971 1190.601">
+                        <div><svg className="absolute -top-10 lg:-top-64 lg:right-28 ml-auto mr-auto left-0 lg:left-auto right-0 lg:w-lamp w-72 md:w-96" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 675.971 1190.601">
                             <defs>
                                 <linearGradient id="linear-gradient" x1="0.489" y1="0.569" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
                                 <stop offset="0" stop-color="#fff"/>
@@ -53,8 +52,8 @@ const Home = () => {
                 </div>
                 </div>
                 <section className="bg-white dark:bg-zinc-800">
-                    <div className="max-w-7xl w-full mx-auto">
-                        <div className="flex justify-center pt-14">
+                    <div className="max-w-7xl w-full mx-auto pb-24">
+                        <div className="flex justify-center pt-20">
                             <h2 className="font-semibold text-3xl pb-2 dark:text-white">How it works</h2>
                         </div>
 
@@ -95,7 +94,7 @@ const Home = () => {
                                 </p>
                             </div>
                             <div>
-                            <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
+                            <div className="w-full bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
                                 <Player
                                     autoplay
                                     loop
@@ -111,7 +110,7 @@ const Home = () => {
                                 </p>
                             </div>
                             <div>
-                            <div className="w-full h-72 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
+                            <div className="w-full bg-gray-50 dark:bg-zinc-700 rounded-lg hover:scale-110 transition-all">
                                 <Player
                                     autoplay
                                     loop
@@ -129,7 +128,7 @@ const Home = () => {
 
                         </div>
                         
-                        <div className=" relative overflow-hidden w-full bg-[#F2EEE8] dark:bg-zinc-900 rounded-lg py-16 md:px-64 px-4">
+                        <div className="overflow-hidden relative w-full bg-[#F2EEE8] dark:bg-zinc-900 lg:rounded-lg py-16 md:px-16 lg:px-64 px-4 mt-20">
                             <h2 className="text-3xl flex justify-center font-semibold pb-2 dark:text-white">
                                 What our customers say
                             </h2>
@@ -137,29 +136,23 @@ const Home = () => {
 
                             <p className="flex justify-center text-lg dark:text-white text-center">See what our customers have to say about Lämp</p>
 
-                            <div className=" grid lg:grid-cols-2 lg:gap-14 pt-12">
+                            <div className=" grid md:grid-cols-2 md:gap-14 pt-12">
                                 <img className="hidden md:block absolute h-[400px] w-[400px] -top-4 left-0" src="/images/categories/ceilinglamp.svg" alt="" />
-                                <img className="h-80 rounded-lg ml-auto w-full object-cover z-10" src="/images/customers/Customer1.jpg" alt="" />
+                                <img className="h-96 rounded-lg ml-auto w-full object-cover z-10" src="/images/customers/Customer1.jpg" alt="" />
                                 <div className="">
 
-                                    <h4 className="pb-8 text-orange-500 text-2xl font-semibold">Lamps made with great taste.</h4>
+                                    <h4 className="pb-8 text-orange-500 text-2xl font-semibold md:pt-0 pt-8">Lamps made with great taste.</h4>
                                     <p className="pb-8 dark:text-white">I was looking for a lamp and came across Lämps. I selected my favorite lamp and was able to view it in AR with my phone. This way I knew that it would fit in my house. </p>
                                     <p className="font-semibold text-lg dark:text-white">Zachery Dohen</p>
                                     <p className="dark:text-gray-300 text-opacity-60">~ Lamp enthusiast</p>
                                 </div>
                             </div>
                         </div>
-
-                        <div>
-                            <h2>
-                                Subscribe to our Newsletter
-                            </h2>
-                        </div>
                     </div>
                 </section>
             </main>
 
-            <footer className="dark:bg-zinc-900 bg-neutral-100 h-auto">
+            <footer className="dark:bg-zinc-1000 bg-neutral-100 h-auto">
                 <Footer />
             </footer>
 
